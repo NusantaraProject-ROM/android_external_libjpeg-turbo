@@ -32,3 +32,7 @@ It is unclear why the unmodified code from upstream appends an underscore
 to name.  Before removing the underscore, the code failed to link because
 the function names in the SIMD code did not match the callers (because of
 the extra underscore).
+
+(5) Cherry picked fix for Arm64 assembly from upstream.
+
+https://github.com/libjpeg-turbo/libjpeg-turbo/commit/1120ff29a178ee666504f0067e7c079a6b792296
