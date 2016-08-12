@@ -1,4 +1,8 @@
-/* jconfig.h.  Generated from jconfig.h.in by configure.  */
+/* jconfig.h.  Customized for android on the basis of jconfig.h.in. */
+
+#ifndef __JCONFIG_H__
+#define __JCONFIG_H__
+
 /* Version ID for the JPEG library.
  * Might be useful for tests like "#if JPEG_LIB_VERSION >= 60".
  */
@@ -70,9 +74,14 @@
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
 
-/* The size of `size_t', as computed by sizeof. */
-#if __WORDSIZE==64 || defined(_WIN64)
-#define SIZEOF_SIZE_T 8
+/* The size of `size_t', as reported by the compiler through the
+ * builtin macro __SIZEOF_SIZE_T__. If the compiler does not
+ * report __SIZEOF_SIZE_T__ add a custom rule for the compiler
+ * here. */
+#ifdef __SIZEOF_SIZE_T__
+#define SIZEOF_SIZE_T __SIZEOF_SIZE_T__
 #else
-#define SIZEOF_SIZE_T 4
+#error cannot determine the size of size_t
 #endif
+
+#endif // __JCONFIG_H__
