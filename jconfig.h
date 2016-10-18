@@ -11,10 +11,10 @@
 #define LIBJPEG_TURBO_VERSION_NUMBER 1005001
 
 /* Support arithmetic encoding */
-/* #undef C_ARITH_CODING_SUPPORTED */
+#define C_ARITH_CODING_SUPPORTED 1
 
 /* Support arithmetic decoding */
-/* #undef  D_ARITH_CODING_SUPPORTED */
+#define D_ARITH_CODING_SUPPORTED 1
 
 /*
  * Define BITS_IN_JSAMPLE as either
