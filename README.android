@@ -23,3 +23,9 @@ It is unclear why the unmodified code from upstream appends an underscore
 to name.  Before removing the underscore, the code failed to link because
 the function names in the SIMD code did not match the callers (because of
 the extra underscore).
+
+(3) jmemmgr.c
+
+Fix broken build with NDK platforms < android-21
+Cherry picked from upstream:
+https://github.com/libjpeg-turbo/libjpeg-turbo/commit/dfefba77520ded5c5fd4864e76352a5f3eb23e74
