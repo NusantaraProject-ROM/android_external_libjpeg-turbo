@@ -1,21 +1,20 @@
-/* jconfig.h.  Customized for android on the basis of jconfig.h.in. */
-
-#ifndef __JCONFIG_H__
-#define __JCONFIG_H__
-
+/* jconfig.h.  Generated from jconfig.h.in by configure.  */
 /* Version ID for the JPEG library.
  * Might be useful for tests like "#if JPEG_LIB_VERSION >= 60".
  */
 #define JPEG_LIB_VERSION 62
 
 /* libjpeg-turbo version */
-#define LIBJPEG_TURBO_VERSION 1.4.2
+#define LIBJPEG_TURBO_VERSION 1.5.1
+
+/* libjpeg-turbo version in integer form */
+#define LIBJPEG_TURBO_VERSION_NUMBER 1005001
 
 /* Support arithmetic encoding */
-/* #define C_ARITH_CODING_SUPPORTED 1 */
+/* #undef C_ARITH_CODING_SUPPORTED */
 
 /* Support arithmetic decoding */
-/* #define D_ARITH_CODING_SUPPORTED 1 */
+/* #undef  D_ARITH_CODING_SUPPORTED */
 
 /*
  * Define BITS_IN_JSAMPLE as either
@@ -54,7 +53,7 @@
 /* #undef NEED_BSD_STRINGS */
 
 /* Define if you need to include <sys/types.h> to get size_t. */
-/* #undef NEED_SYS_TYPES_H 1 */
+/* #undef NEED_SYS_TYPES_H */
 
 /* Define if your (broken) compiler shifts signed values as if they were
    unsigned. */
@@ -73,15 +72,3 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
-
-/* The size of `size_t', as reported by the compiler through the
- * builtin macro __SIZEOF_SIZE_T__. If the compiler does not
- * report __SIZEOF_SIZE_T__ add a custom rule for the compiler
- * here. */
-#ifdef __SIZEOF_SIZE_T__
-#define SIZEOF_SIZE_T __SIZEOF_SIZE_T__
-#else
-#error cannot determine the size of size_t
-#endif
-
-#endif // __JCONFIG_H__
