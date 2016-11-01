@@ -5,9 +5,8 @@ LOCAL_PATH:= $(call my-dir)
 # By default, the build system generates ARM target binaries in thumb mode,
 # where each instruction is 16 bits wide.  Defining this variable as arm
 # forces the build system to generate object files in 32-bit arm mode.  This
-# is the same setting previously used by libjpeg.
-# TODO (msarett): Run performance tests to determine whether arm mode is still
-#                 preferred to thumb mode for libjpeg-turbo.
+# is the same setting previously used by libjpeg and it provides a small
+# performance benefit.
 libjpeg_turbo_common_arm_mode := arm
 
 libjpeg_turbo_common_cflags := -O3 -fstrict-aliasing
