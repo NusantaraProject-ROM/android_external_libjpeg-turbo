@@ -29,3 +29,8 @@ the extra underscore).
 Fix broken build with NDK platforms < android-21
 Cherry picked from upstream:
 https://github.com/libjpeg-turbo/libjpeg-turbo/commit/dfefba77520ded5c5fd4864e76352a5f3eb23e74
+
+(4) rdppm.c
+Fix sign mismatch comparison warnings
+Cherry picked from upstream:
+https://github.com/libjpeg-turbo/libjpeg-turbo/commit/d22fd541bf9dd87889c25909e19a640a580bcad7
