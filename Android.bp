@@ -12,6 +12,8 @@ cc_defaults {
     srcs: [
         "jcapimin.c",
         "jcapistd.c",
+        "jaricom.c",
+        "jcarith.c",
         "jccoefct.c",
         "jccolor.c",
         "jcdctmgr.c",
@@ -28,6 +30,7 @@ cc_defaults {
         "jctrans.c",
         "jdapimin.c",
         "jdapistd.c",
+        "jdarith.c",
         "jdatadst.c",
         "jdatasrc.c",
         "jdcoefct.c",
