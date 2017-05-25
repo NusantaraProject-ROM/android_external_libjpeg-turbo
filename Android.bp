@@ -173,6 +173,7 @@ cc_defaults {
 // Also build as a shared library.
 cc_library {
     name: "libjpeg",
+    vendor_available: true,
     defaults: ["libjpeg-defaults"],
     export_include_dirs: ["."],
 }
