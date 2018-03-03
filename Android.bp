@@ -6,6 +6,7 @@ cc_defaults {
         "-O3",
         "-fstrict-aliasing",
 
+        "-Wno-sign-compare",
         "-Wno-unused-parameter",
         "-Werror",
     ],
