@@ -204,6 +204,7 @@ default_decompress_parms (j_decompress_ptr cinfo)
   cinfo->raw_data_out = FALSE;
   cinfo->dct_method = JDCT_DEFAULT;
   cinfo->do_fancy_upsampling = TRUE;
+  cinfo->disable_merged_upsampling = FALSE;
   cinfo->do_block_smoothing = TRUE;
   cinfo->quantize_colors = FALSE;
   /* We set these in case application only sets quantize_colors. */
