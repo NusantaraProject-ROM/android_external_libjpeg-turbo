@@ -300,7 +300,7 @@ typedef int boolean;
 #define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
 #define IDCT_SCALING_SUPPORTED      /* Output rescaling via IDCT? */
 #undef  UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
-#undef  UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
+#define UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
 #define QUANT_1PASS_SUPPORTED       /* 1-pass color quantization? */
 #define QUANT_2PASS_SUPPORTED       /* 2-pass color quantization? */
 
