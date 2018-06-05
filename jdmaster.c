@@ -33,6 +33,7 @@
 LOCAL(boolean)
 use_merged_upsample (j_decompress_ptr cinfo)
 {
+    return FALSE;
 #ifdef UPSAMPLE_MERGING_SUPPORTED
   /* Merging is the equivalent of plain box-filter upsampling */
   if (cinfo->do_fancy_upsampling || cinfo->CCIR601_sampling)
