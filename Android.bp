@@ -72,15 +72,17 @@ cc_defaults {
             instruction_set: "arm",
             // ARM v7 NEON
             srcs: [
-                "simd/arm/jsimd.c",
-                "simd/arm/jsimd_neon.S",
+                "simd/arm/arm/jsimd.c",
+                "simd/arm/arm/jsimd_neon.S",
+                "simd/arm/common/jdsample-neon.c",
             ],
         },
         arm64: {
             // ARM v8 64-bit NEON
             srcs: [
-                "simd/arm64/jsimd.c",
-                "simd/arm64/jsimd_neon.S",
+                "simd/arm/arm64/jsimd.c",
+                "simd/arm/arm64/jsimd_neon.S",
+                "simd/arm/common/jdsample-neon.c",
             ],
         },
         x86: {
