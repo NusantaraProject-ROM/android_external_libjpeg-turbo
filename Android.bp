@@ -133,7 +133,6 @@ cc_defaults {
                 "simd/i386/jsimdcpu.asm",
             ],
             asflags: [
-                "-DELF",
                 "-DPIC",
             ],
             local_include_dirs: [
@@ -174,7 +173,6 @@ cc_defaults {
                 "simd/x86_64/jsimdcpu.asm",
             ],
             asflags: [
-                "-DELF",
                 "-DPIC",
                 "-D__x86_64__",
             ],
@@ -190,6 +188,19 @@ cc_defaults {
             srcs: ["jsimd_none.c"],
         },
     },
+
+    target: {
+        linux: {
+            asflags: [
+                "-DELF",
+            ],
+        },
+        darwin: {
+            asflags: [
+                "-DMACHO",
+            ],
+        },
+    },
 }
 
 // Also build as a shared library.
@@ -197,12 +208,6 @@ cc_library {
     name: "libjpeg",
     host_supported: true,
     vendor_available: true,
-    target: {
-        // TODO(b/67474260) Turn this back on
-        darwin: {
-            enabled: false,
-        },
-    },
     vndk: {
         enabled: true,
     },
