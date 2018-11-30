@@ -200,6 +200,16 @@ cc_defaults {
                 "-DMACHO",
             ],
         },
+        windows_x86: {
+            asflags: [
+                "-DWIN32",
+            ],
+        },
+        windows_x86_64: {
+            asflags: [
+                "-DWIN64",
+            ],
+        },
     },
     xom: false,
 }
@@ -214,6 +224,11 @@ cc_library {
     },
     defaults: ["libjpeg-defaults"],
     export_include_dirs: ["."],
+    target: {
+        windows: {
+            enabled: true,
+        },
+    },
 }
 
 // Build static library against the NDK
