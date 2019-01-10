@@ -9,3 +9,12 @@ the libjpeg-turbo build system) or to manually create them.
 
 Autogenerating these files on linux gets us most of the way, but we've needed
 to add some multi-platform flexibility to the INLINE and SIZEOF_SIZE_T macros.
+
+(2) simd/arm64/jsimd_neon.S
+
+To support execute-only memory layouts, constants in handwritten assembly have
+been moved into a dedicated rodata section.
+
+There's a pull request upstream for this as well. If that's accepted, this
+can be removed as an Android-specific modification.
+https://github.com/libjpeg-turbo/libjpeg-turbo/pull/318
