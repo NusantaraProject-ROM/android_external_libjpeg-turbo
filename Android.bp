@@ -211,7 +211,6 @@ cc_defaults {
             ],
         },
     },
-    xom: false,
 }
 
 // Also build as a shared library.
