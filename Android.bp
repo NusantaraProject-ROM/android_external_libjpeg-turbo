@@ -221,7 +221,6 @@ cc_library {
     vndk: {
         enabled: true,
     },
-    double_loadable: true,
     defaults: ["libjpeg-defaults"],
     export_include_dirs: ["."],
     target: {
