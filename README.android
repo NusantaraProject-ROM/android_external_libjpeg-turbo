@@ -1,5 +1,5 @@
-Any Android specific modifications to upstream libjpeg-turbo (2.0.0) should
-be listed here:
+Any Android specific modifications to upstream libjpeg-turbo (the version
+specified in METADATA) should be listed here:
 
 (1) jconfig.h and jconfigint.h
 
