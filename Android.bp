@@ -75,10 +75,11 @@ cc_defaults {
             srcs: [
                 "simd/arm/arm/jsimd.c",
                 "simd/arm/arm/jsimd_neon.S",
-                "simd/arm/common/jidctred-neon.c",
                 "simd/arm/common/jdcolor-neon.c",
                 "simd/arm/common/jdmerge-neon.c",
                 "simd/arm/common/jdsample-neon.c",
+                "simd/arm/common/jidctint-neon.c",
+                "simd/arm/common/jidctred-neon.c",
             ],
         },
         arm64: {
@@ -86,10 +87,11 @@ cc_defaults {
             srcs: [
                 "simd/arm/arm64/jsimd.c",
                 "simd/arm/arm64/jsimd_neon.S",
-                "simd/arm/common/jidctred-neon.c",
                 "simd/arm/common/jdcolor-neon.c",
                 "simd/arm/common/jdmerge-neon.c",
                 "simd/arm/common/jdsample-neon.c",
+                "simd/arm/common/jidctint-neon.c",
+                "simd/arm/common/jidctred-neon.c",
             ],
         },
         x86: {
