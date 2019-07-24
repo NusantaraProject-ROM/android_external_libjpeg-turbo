@@ -96,6 +96,8 @@ class TJBench {
     int rindex = TJ.getRedOffset(pixelFormat);
     int gindex = TJ.getGreenOffset(pixelFormat);
     int bindex = TJ.getBlueOffset(pixelFormat);
+    if ((long)w[0] * (long)h[0] * (long)ps > (long)Integer.MAX_VALUE)
+      throw new Exception("Image is too lange");
     byte[] dstBuf = new byte[w[0] * h[0] * ps];
     int pixels = w[0] * h[0], dstPtr = 0, rgbPtr = 0;
     while (pixels-- > 0) {
@@ -147,8 +149,11 @@ class TJBench {
 
     tjd = new TJDecompressor();
 
-    if (dstBuf == null)
+    if (dstBuf == null) {
+      if ((long)pitch * (long)scaledh > (long)Integer.MAX_VALUE)
+          throw new Exception("Image is too large");
       dstBuf = new byte[pitch * scaledh];
+    }
 
     /* Set the destination buffer to gray so we know whether the decompressor
        attempted to write to it */
@@ -284,6 +289,8 @@ class TJBench {
     String pfStr = pixFormatStr[pf];
     YUVImage yuvImage = null;
 
+    if ((long)pitch * (long)h > (long)Integer.MAX_VALUE)
+        throw new Exception("Image is too lange");
     tmpBuf = new byte[pitch * h];
 
     if (quiet == 0)
@@ -429,6 +436,8 @@ class TJBench {
     int ps = TJ.getPixelSize(pf), tile;
 
     FileInputStream fis = new FileInputStream(fileName);
+    if (fis.getChannel().size() > (long)Integer.MAX_VALUE)
+      throw new Exception("Image is too large");
     int srcSize = (int)fis.getChannel().size();
     srcBuf = new byte[srcSize];
     fis.read(srcBuf, 0, srcSize);
