@@ -34,3 +34,8 @@ https://github.com/libjpeg-turbo/libjpeg-turbo/commit/dfefba77520ded5c5fd4864e76
 Fix sign mismatch comparison warnings
 Cherry picked from upstream:
 https://github.com/libjpeg-turbo/libjpeg-turbo/commit/d22fd541bf9dd87889c25909e19a640a580bcad7
+
+(5) java/TJBench.java, tjbench.c, tjunittest.c, and turbojpeg.c
+Add checks to ensure that the image is not larger than the allocated buffers.
+Cherry picked from upstream:
+https://github.com/libjpeg-turbo/libjpeg-turbo/commit/2a9e3bd7430cfda1bc812d139e0609c6aca0b884
