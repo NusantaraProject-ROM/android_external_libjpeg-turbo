@@ -40,3 +40,9 @@ Add checks to ensure that the image is not larger than the allocated buffers.
 Cherry picked from upstream:
 https://github.com/libjpeg-turbo/libjpeg-turbo/commit/2a9e3bd7430cfda1bc812d139e0609c6aca0b884
 
+(6) java/TJBench.java, tjbench.c
+Fix logical errors when decompressing ICC data
+This was pulled in due to a SEGFAULT that occurs when running the
+proof-of-concept for (5)
+Cherry picked from upstream:
+https://github.com/libjpeg-turbo/libjpeg-turbo/commit/11eec4a398f3fc1b9d39c1d3b81b53ae85d9b5e6
