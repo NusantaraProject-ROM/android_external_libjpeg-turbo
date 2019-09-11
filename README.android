@@ -46,3 +46,10 @@ This was pulled in due to a SEGFAULT that occurs when running the
 proof-of-concept for (5)
 Cherry picked from upstream:
 https://github.com/libjpeg-turbo/libjpeg-turbo/commit/11eec4a398f3fc1b9d39c1d3b81b53ae85d9b5e6
+
+(7) tjbench.c
+Fix memory management access violation
+This was pulled in due to a SEGFAULT that occurs when running the
+proof-of-concept for (5)
+Cherry picked from upstream:
+https://github.com/libjpeg-turbo/libjpeg-turbo/commit/5fce2e942136cb70e5a30ff15a2d58b07947aa84
