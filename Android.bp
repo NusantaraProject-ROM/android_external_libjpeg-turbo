@@ -181,12 +181,6 @@ cc_defaults {
                 "simd/nasm",
             ],
         },
-        mips: {
-            srcs: ["jsimd_none.c"],
-        },
-        mips64: {
-            srcs: ["jsimd_none.c"],
-        },
     },
 
     target: {
