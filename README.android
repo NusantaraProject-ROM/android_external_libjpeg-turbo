@@ -18,7 +18,3 @@ been moved into a dedicated rodata section.
 There's a pull request upstream for this as well. If that's accepted, this
 can be removed as an Android-specific modification.
 https://github.com/libjpeg-turbo/libjpeg-turbo/pull/318
-
-(3) Cherry-pick of 2a9e3b and 15902850 from upstream
-
-These fix a bug in TurboJPEG's handling of gigapixel images.

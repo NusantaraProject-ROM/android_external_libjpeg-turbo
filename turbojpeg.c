@@ -237,7 +237,9 @@ static int setCompDefaults(struct jpeg_compress_struct *cinfo, int pixelFormat,
                            int subsamp, int jpegQual, int flags)
 {
   int retval = 0;
+#ifndef NO_GETENV
   char *env = NULL;
+#endif
 
   cinfo->in_color_space = pf2cs[pixelFormat];
   cinfo->input_components = tjPixelSize[pixelFormat];
@@ -1371,12 +1373,12 @@ static int setDecodeDefaults(struct jpeg_decompress_struct *dinfo,
 }
 
 
-int my_read_markers(j_decompress_ptr dinfo)
+static int my_read_markers(j_decompress_ptr dinfo)
 {
   return JPEG_REACHED_SOS;
 }
 
-void my_reset_marker_reader(j_decompress_ptr dinfo)
+static void my_reset_marker_reader(j_decompress_ptr dinfo)
 {
 }
 
@@ -1430,6 +1432,9 @@ DLLEXPORT int tjDecodeYUVPlanes(tjhandle handle,
   else if (flags & TJFLAG_FORCESSE2) putenv("JSIMD_FORCESSE2=1");
 #endif
 
+  dinfo->progressive_mode = dinfo->inputctl->has_multiple_scans = FALSE;
+  dinfo->Ss = dinfo->Ah = dinfo->Al = 0;
+  dinfo->Se = DCTSIZE2 - 1;
   if (setDecodeDefaults(dinfo, pixelFormat, subsamp, flags) == -1) {
     retval = -1;  goto bailout;
   }
