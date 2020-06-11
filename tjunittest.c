@@ -62,14 +62,14 @@ static void usage(char *progName)
 
 
 #define _throwtj() { \
-  printf("TurboJPEG ERROR:\n%s\n", tjGetErrorStr()); \
+  fprintf(stderr, "TurboJPEG ERROR:\n%s\n", tjGetErrorStr()); \
   bailout() \
 }
 #define _tj(f) { if ((f) == -1) _throwtj(); }
-#define _throw(m) { printf("ERROR: %s\n", m);  bailout() }
+#define _throw(m) { fprintf(stderr, "ERROR: %s\n", m);  bailout() }
 #define _throwmd5(filename, md5sum, ref) { \
-  printf("\n%s has an MD5 sum of %s.\n   Should be %s.\n", filename, md5sum, \
-         ref); \
+  fprintf(stderr, "\n%s has an MD5 sum of %s.\n   Should be %s.\n", filename, \
+          md5sum, ref); \
   bailout() \
 }
 
@@ -155,22 +155,24 @@ static void initBuf(unsigned char *buf, int w, int h, int pf, int flags)
 
 #define checkval(v, cv) { \
   if (v < cv - 1 || v > cv + 1) { \
-    printf("\nComp. %s at %d,%d should be %d, not %d\n", #v, row, col, cv, \
-           v); \
+    fprintf(stderr, "\nComp. %s at %d,%d should be %d, not %d\n", #v, row, \
+            col, cv, v); \
     retval = 0;  exitStatus = -1;  goto bailout; \
   } \
 }
 
 #define checkval0(v) { \
   if (v > 1) { \
-    printf("\nComp. %s at %d,%d should be 0, not %d\n", #v, row, col, v); \
+    fprintf(stderr, "\nComp. %s at %d,%d should be 0, not %d\n", #v, row, \
+            col, v); \
     retval = 0;  exitStatus = -1;  goto bailout; \
   } \
 }
 
 #define checkval255(v) { \
   if (v < 254) { \
-    printf("\nComp. %s at %d,%d should be 255, not %d\n", #v, row, col, v); \
+    fprintf(stderr, "\nComp. %s at %d,%d should be 255, not %d\n", #v, row, \
+            col, v); \
     retval = 0;  exitStatus = -1;  goto bailout; \
   } \
 }
@@ -255,15 +257,15 @@ bailout:
     for (row = 0; row < h; row++) {
       for (col = 0; col < w; col++) {
         if (pf == TJPF_CMYK)
-          printf("%.3d/%.3d/%.3d/%.3d ", buf[(row * w + col) * ps],
-                 buf[(row * w + col) * ps + 1], buf[(row * w + col) * ps + 2],
-                 buf[(row * w + col) * ps + 3]);
+          fprintf(stderr, "%.3d/%.3d/%.3d/%.3d ", buf[(row * w + col) * ps],
+                  buf[(row * w + col) * ps + 1], buf[(row * w + col) * ps + 2],
+                  buf[(row * w + col) * ps + 3]);
         else
-          printf("%.3d/%.3d/%.3d ", buf[(row * w + col) * ps + roffset],
-                 buf[(row * w + col) * ps + goffset],
-                 buf[(row * w + col) * ps + boffset]);
+          fprintf(stderr, "%.3d/%.3d/%.3d ", buf[(row * w + col) * ps + roffset],
+                  buf[(row * w + col) * ps + goffset],
+                  buf[(row * w + col) * ps + boffset]);
       }
-      printf("\n");
+      fprintf(stderr, "\n");
     }
   }
   return retval;
@@ -322,21 +324,21 @@ bailout:
   if (retval == 0) {
     for (row = 0; row < ph; row++) {
       for (col = 0; col < pw; col++)
-        printf("%.3d ", buf[ypitch * row + col]);
-      printf("\n");
+        fprintf(stderr, "%.3d ", buf[ypitch * row + col]);
+      fprintf(stderr, "\n");
     }
-    printf("\n");
+    fprintf(stderr, "\n");
     for (row = 0; row < ch; row++) {
       for (col = 0; col < cw; col++)
-        printf("%.3d ", buf[ypitch * ph + (uvpitch * row + col)]);
-      printf("\n");
+        fprintf(stderr, "%.3d ", buf[ypitch * ph + (uvpitch * row + col)]);
+      fprintf(stderr, "\n");
     }
-    printf("\n");
+    fprintf(stderr, "\n");
     for (row = 0; row < ch; row++) {
       for (col = 0; col < cw; col++)
-        printf("%.3d ",
-               buf[ypitch * ph + uvpitch * ch + (uvpitch * row + col)]);
-      printf("\n");
+        fprintf(stderr, "%.3d ",
+                buf[ypitch * ph + uvpitch * ch + (uvpitch * row + col)]);
+      fprintf(stderr, "\n");
     }
   }
 
@@ -350,7 +352,8 @@ static void writeJPEG(unsigned char *jpegBuf, unsigned long jpegSize,
   FILE *file = fopen(filename, "wb");
 
   if (!file || fwrite(jpegBuf, jpegSize, 1, file) != 1) {
-    printf("ERROR: Could not write to %s.\n%s\n", filename, strerror(errno));
+    fprintf(stderr, "ERROR: Could not write to %s.\n%s\n", filename,
+            strerror(errno));
     bailout()
   }
 
@@ -388,20 +391,21 @@ static void compTest(tjhandle handle, unsigned char **dstBuf,
       _throw("Memory allocation failure");
     memset(yuvBuf, 0, yuvSize);
 
-    printf("%s %s -> YUV %s ... ", pfStr, buStrLong, subNameLong[subsamp]);
+    fprintf(stderr, "%s %s -> YUV %s ... ", pfStr, buStrLong,
+            subNameLong[subsamp]);
     _tj(tjEncodeYUV3(handle2, srcBuf, w, 0, h, pf, yuvBuf, pad, subsamp,
                      flags));
     tjDestroy(handle2);
-    if (checkBufYUV(yuvBuf, w, h, subsamp, sf)) printf("Passed.\n");
-    else printf("FAILED!\n");
+    if (checkBufYUV(yuvBuf, w, h, subsamp, sf)) fprintf(stderr, "Passed.\n");
+    else fprintf(stderr, "FAILED!\n");
 
-    printf("YUV %s %s -> JPEG Q%d ... ", subNameLong[subsamp], buStrLong,
-           jpegQual);
+    fprintf(stderr, "YUV %s %s -> JPEG Q%d ... ", subNameLong[subsamp], buStrLong,
+            jpegQual);
     _tj(tjCompressFromYUV(handle, yuvBuf, w, pad, h, subsamp, dstBuf, dstSize,
                           jpegQual, flags));
   } else {
-    printf("%s %s -> %s Q%d ... ", pfStr, buStrLong, subNameLong[subsamp],
-           jpegQual);
+    fprintf(stderr, "%s %s -> %s Q%d ... ", pfStr, buStrLong,
+            subNameLong[subsamp], jpegQual);
     _tj(tjCompress2(handle, srcBuf, w, 0, h, pf, dstBuf, dstSize, subsamp,
                     jpegQual, flags));
   }
@@ -409,7 +413,7 @@ static void compTest(tjhandle handle, unsigned char **dstBuf,
   snprintf(tempStr, 1024, "%s_enc_%s_%s_%s_Q%d.jpg", basename, pfStr, buStr,
            subName[subsamp], jpegQual);
   writeJPEG(*dstBuf, *dstSize, tempStr);
-  printf("Done.\n  Result in %s\n", tempStr);
+  fprintf(stderr, "Done.\n  Result in %s\n", tempStr);
 
 bailout:
   if (yuvBuf) free(yuvBuf);
@@ -449,35 +453,36 @@ static void _decompTest(tjhandle handle, unsigned char *jpegBuf,
       _throw("Memory allocation failure");
     memset(yuvBuf, 0, yuvSize);
 
-    printf("JPEG -> YUV %s ", subNameLong[subsamp]);
+    fprintf(stderr, "JPEG -> YUV %s ", subNameLong[subsamp]);
     if (sf.num != 1 || sf.denom != 1)
-      printf("%d/%d ... ", sf.num, sf.denom);
-    else printf("... ");
+      fprintf(stderr, "%d/%d ... ", sf.num, sf.denom);
+    else fprintf(stderr, "... ");
     _tj(tjDecompressToYUV2(handle, jpegBuf, jpegSize, yuvBuf, scaledWidth, pad,
                            scaledHeight, flags));
     if (checkBufYUV(yuvBuf, scaledWidth, scaledHeight, subsamp, sf))
-      printf("Passed.\n");
-    else printf("FAILED!\n");
+      fprintf(stderr, "Passed.\n");
+    else fprintf(stderr, "FAILED!\n");
 
-    printf("YUV %s -> %s %s ... ", subNameLong[subsamp], pixFormatStr[pf],
-           (flags & TJFLAG_BOTTOMUP) ? "Bottom-Up" : "Top-Down ");
+    fprintf(stderr, "YUV %s -> %s %s ... ", subNameLong[subsamp],
+            pixFormatStr[pf],
+            (flags & TJFLAG_BOTTOMUP) ? "Bottom-Up" : "Top-Down ");
     _tj(tjDecodeYUV(handle2, yuvBuf, pad, subsamp, dstBuf, scaledWidth, 0,
                     scaledHeight, pf, flags));
     tjDestroy(handle2);
   } else {
-    printf("JPEG -> %s %s ", pixFormatStr[pf],
-           (flags & TJFLAG_BOTTOMUP) ? "Bottom-Up" : "Top-Down ");
+    fprintf(stderr, "JPEG -> %s %s ", pixFormatStr[pf],
+            (flags & TJFLAG_BOTTOMUP) ? "Bottom-Up" : "Top-Down ");
     if (sf.num != 1 || sf.denom != 1)
-      printf("%d/%d ... ", sf.num, sf.denom);
-    else printf("... ");
+      fprintf(stderr, "%d/%d ... ", sf.num, sf.denom);
+    else fprintf(stderr, "... ");
     _tj(tjDecompress2(handle, jpegBuf, jpegSize, dstBuf, scaledWidth, 0,
                       scaledHeight, pf, flags));
   }
 
   if (checkBuf(dstBuf, scaledWidth, scaledHeight, pf, subsamp, sf, flags))
-    printf("Passed.");
-  else printf("FAILED!");
-  printf("\n");
+    fprintf(stderr, "Passed.");
+  else fprintf(stderr, "FAILED!");
+  fprintf(stderr, "\n");
 
 bailout:
   if (yuvBuf) free(yuvBuf);
@@ -540,14 +545,14 @@ static void doTest(int w, int h, const int *formats, int nformats, int subsamp,
                flags);
       decompTest(dhandle, dstBuf, size, w, h, pf, basename, subsamp, flags);
       if (pf >= TJPF_RGBX && pf <= TJPF_XRGB) {
-        printf("\n");
+        fprintf(stderr, "\n");
         decompTest(dhandle, dstBuf, size, w, h, pf + (TJPF_RGBA - TJPF_RGBX),
                    basename, subsamp, flags);
       }
-      printf("\n");
+      fprintf(stderr, "\n");
     }
   }
-  printf("--------------------\n\n");
+  fprintf(stderr, "--------------------\n\n");
 
 bailout:
   if (chandle) tjDestroy(chandle);
@@ -565,13 +570,14 @@ static void bufSizeTest(void)
 
   if ((handle = tjInitCompress()) == NULL) _throwtj();
 
-  printf("Buffer size regression test\n");
+  fprintf(stderr, "Buffer size regression test\n");
   for (subsamp = 0; subsamp < TJ_NUMSAMP; subsamp++) {
     for (w = 1; w < 48; w++) {
       int maxh = (w == 1) ? 2048 : 48;
 
       for (h = 1; h < maxh; h++) {
-        if (h % 100 == 0) printf("%.4d x %.4d\b\b\b\b\b\b\b\b\b\b\b", w, h);
+        if (h % 100 == 0)
+          fprintf(stderr, "%.4d x %.4d\b\b\b\b\b\b\b\b\b\b\b", w, h);
         if ((srcBuf = (unsigned char *)malloc(w * h * 4)) == NULL)
           _throw("Memory allocation failure");
         if (!alloc || doYUV) {
@@ -628,7 +634,7 @@ static void bufSizeTest(void)
       }
     }
   }
-  printf("Done.      \n");
+  fprintf(stderr, "Done.      \n");
 
 bailout:
   if (srcBuf) free(srcBuf);
@@ -755,11 +761,11 @@ static int doBmpTest(const char *ext, int width, int align, int height, int pf,
                          flags)) == NULL)
     _throwtj();
   if (width != loadWidth || height != loadHeight) {
-    printf("\n   Image dimensions of %s are bogus\n", filename);
+    fprintf(stderr, "\n   Image dimensions of %s are bogus\n", filename);
     retval = -1;  goto bailout;
   }
   if (!cmpBitmap(buf, width, pitch, height, pf, flags, 0)) {
-    printf("\n   Pixel data in %s is bogus\n", filename);
+    fprintf(stderr, "\n   Pixel data in %s is bogus\n", filename);
     retval = -1;  goto bailout;
   }
   if (pf == TJPF_GRAY) {
@@ -770,7 +776,7 @@ static int doBmpTest(const char *ext, int width, int align, int height, int pf,
       _throwtj();
     pitch = PAD(width * tjPixelSize[pf], align);
     if (!cmpBitmap(buf, width, pitch, height, pf, flags, 1)) {
-      printf("\n   Converting %s to RGB failed\n", filename);
+      fprintf(stderr, "\n   Converting %s to RGB failed\n", filename);
       retval = -1;  goto bailout;
     }
 
@@ -781,7 +787,7 @@ static int doBmpTest(const char *ext, int width, int align, int height, int pf,
       _throwtj();
     pitch = PAD(width * tjPixelSize[pf], align);
     if (!cmpBitmap(buf, width, pitch, height, pf, flags, 1)) {
-      printf("\n   Converting %s to CMYK failed\n", filename);
+      fprintf(stderr, "\n   Converting %s to CMYK failed\n", filename);
       retval = -1;  goto bailout;
     }
   }
@@ -798,8 +804,9 @@ static int doBmpTest(const char *ext, int width, int align, int height, int pf,
        pixelFormat != TJPF_BGR) ||
       (pf != TJPF_GRAY && !strcasecmp(ext, "ppm") &&
        pixelFormat != TJPF_RGB)) {
-    printf("\n   tjLoadImage() returned unexpected pixel format: %s\n",
-           pixFormatStr[pixelFormat]);
+    fprintf(stderr,
+            "\n   tjLoadImage() returned unexpected pixel format: %s\n",
+            pixFormatStr[pixelFormat]);
     retval = -1;
   }
   unlink(filename);
@@ -817,31 +824,31 @@ static int bmpTest(void)
 
   for (align = 1; align <= 8; align *= 2) {
     for (format = 0; format < TJ_NUMPF; format++) {
-      printf("%s Top-Down BMP (row alignment = %d bytes)  ...  ",
-             pixFormatStr[format], align);
+      fprintf(stderr, "%s Top-Down BMP (row alignment = %d bytes)  ...  ",
+              pixFormatStr[format], align);
       if (doBmpTest("bmp", width, align, height, format, 0) == -1)
         return -1;
-      printf("OK.\n");
+      fprintf(stderr, "OK.\n");
 
-      printf("%s Top-Down PPM (row alignment = %d bytes)  ...  ",
-             pixFormatStr[format], align);
+      fprintf(stderr, "%s Top-Down PPM (row alignment = %d bytes)  ...  ",
+              pixFormatStr[format], align);
       if (doBmpTest("ppm", width, align, height, format,
                     TJFLAG_BOTTOMUP) == -1)
         return -1;
-      printf("OK.\n");
+      fprintf(stderr, "OK.\n");
 
-      printf("%s Bottom-Up BMP (row alignment = %d bytes)  ...  ",
-             pixFormatStr[format], align);
+      fprintf(stderr, "%s Bottom-Up BMP (row alignment = %d bytes)  ...  ",
+              pixFormatStr[format], align);
       if (doBmpTest("bmp", width, align, height, format, 0) == -1)
         return -1;
-      printf("OK.\n");
+      fprintf(stderr, "OK.\n");
 
-      printf("%s Bottom-Up PPM (row alignment = %d bytes)  ...  ",
-             pixFormatStr[format], align);
+      fprintf(stderr, "%s Bottom-Up PPM (row alignment = %d bytes)  ...  ",
+              pixFormatStr[format], align);
       if (doBmpTest("ppm", width, align, height, format,
                     TJFLAG_BOTTOMUP) == -1)
         return -1;
-      printf("OK.\n");
+      fprintf(stderr, "OK.\n");
     }
   }
 
