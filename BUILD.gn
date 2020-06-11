@@ -192,7 +192,7 @@ config("libjpeg_config") {
   include_dirs = [ "." ]
 }
 
-static_library("libjpeg") {
+source_set("libjpeg_sources") {
   sources = [
     "jcapimin.c",
     "jcapistd.c",
@@ -250,7 +250,12 @@ static_library("libjpeg") {
     "jutils.c",
     "jversion.h",
   ]
+}
 
+static_library("libjpeg") {
+  deps = [
+    ":libjpeg_sources"
+  ]
   defines = [
     "WITH_SIMD",
     "NO_GETENV",
@@ -270,4 +275,76 @@ static_library("libjpeg") {
   } else {
     public_deps += [ ":simd" ]
   }
+}
+
+static_library("turbojpeg") {
+  sources = [
+    "turbojpeg.c",
+    "transupp.c",
+    "jdatadst-tj.c",
+    "jdatasrc-tj.c",
+    "rdbmp.c",
+    "rdppm.c",
+    "wrbmp.c",
+    "wrppm.c",
+  ]
+
+  deps = [
+    ":libjpeg_sources"
+  ]
+
+  defines = [
+    "WITH_SIMD",
+    "BMP_SUPPORTED",
+    "PPM_SUPPORTED",
+  ]
+
+  configs += [ ":libjpeg_config" ]
+
+  public_configs = [ ":libjpeg_config" ]
+  public_deps = [
+    ":libjpeg_headers",
+  ]
+
+  # MemorySanitizer doesn't support assembly code, so keep it disabled in
+  # MSan builds for now.
+  if (is_msan) {
+    sources += [ "jsimd_none.c" ]
+  } else {
+    public_deps += [ ":simd" ]
+  }
+}
+
+if (build_with_chromium) {
+  import("//testing/test.gni")
+}
+
+test("libjpeg_turbo_unittests") {
+  testonly = true
+
+  sources = [
+    "tjunittest-gtest-wrapper.cpp",
+    "tjunittest.c",
+    "tjutil.c",
+    "md5/md5.c",
+    "md5/md5hl.c"
+  ]
+
+  deps = [
+    ":turbojpeg",
+    "//testing/gtest",
+    "//testing/gtest:gtest_main",
+  ]
+
+  defines = [
+    "GTEST",
+  ]
+
+  include_dirs = [
+    "//third_party/googletest/src/googletest/include/gtest",
+    ".",
+  ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
 }
