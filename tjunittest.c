@@ -46,7 +46,8 @@
 #endif
 
 
-void usage(char *progName)
+#ifndef GTEST
+static void usage(char *progName)
 {
   printf("\nUSAGE: %s [options]\n\n", progName);
   printf("Options:\n");
@@ -57,6 +58,7 @@ void usage(char *progName)
   printf("-bmp = tjLoadImage()/tjSaveImage() unit test\n\n");
   exit(1);
 }
+#endif
 
 
 #define _throwtj() { \
@@ -71,10 +73,10 @@ void usage(char *progName)
   bailout() \
 }
 
-const char *subNameLong[TJ_NUMSAMP] = {
+static const char *subNameLong[TJ_NUMSAMP] = {
   "4:4:4", "4:2:2", "4:2:0", "GRAY", "4:4:0", "4:1:1"
 };
-const char *subName[TJ_NUMSAMP] = {
+static const char *subName[TJ_NUMSAMP] = {
   "444", "422", "420", "GRAY", "440", "411"
 };
 
@@ -83,20 +85,20 @@ const char *pixFormatStr[TJ_NUMPF] = {
   "RGBA", "BGRA", "ABGR", "ARGB", "CMYK"
 };
 
-const int _3byteFormats[] = { TJPF_RGB, TJPF_BGR };
-const int _4byteFormats[] = {
+static const int _3byteFormats[] = { TJPF_RGB, TJPF_BGR };
+static const int _4byteFormats[] = {
   TJPF_RGBX, TJPF_BGRX, TJPF_XBGR, TJPF_XRGB, TJPF_CMYK
 };
-const int _onlyGray[] = { TJPF_GRAY };
-const int _onlyRGB[] = { TJPF_RGB };
+static const int _onlyGray[] = { TJPF_GRAY };
+static const int _onlyRGB[] = { TJPF_RGB };
 
-int doYUV = 0, alloc = 0, pad = 4;
+static int doYUV = 0, alloc = 0, pad = 4;
 
-int exitStatus = 0;
+static int exitStatus = 0;
 #define bailout() { exitStatus = -1;  goto bailout; }
 
 
-void initBuf(unsigned char *buf, int w, int h, int pf, int flags)
+static void initBuf(unsigned char *buf, int w, int h, int pf, int flags)
 {
   int roffset = tjRedOffset[pf];
   int goffset = tjGreenOffset[pf];
@@ -174,8 +176,8 @@ void initBuf(unsigned char *buf, int w, int h, int pf, int flags)
 }
 
 
-int checkBuf(unsigned char *buf, int w, int h, int pf, int subsamp,
-             tjscalingfactor sf, int flags)
+static int checkBuf(unsigned char *buf, int w, int h, int pf, int subsamp,
+                    tjscalingfactor sf, int flags)
 {
   int roffset = tjRedOffset[pf];
   int goffset = tjGreenOffset[pf];
@@ -270,8 +272,8 @@ bailout:
 
 #define PAD(v, p)  ((v + (p) - 1) & (~((p) - 1)))
 
-int checkBufYUV(unsigned char *buf, int w, int h, int subsamp,
-                tjscalingfactor sf)
+static int checkBufYUV(unsigned char *buf, int w, int h, int subsamp,
+                       tjscalingfactor sf)
 {
   int row, col;
   int hsf = tjMCUWidth[subsamp] / 8, vsf = tjMCUHeight[subsamp] / 8;
@@ -342,7 +344,8 @@ bailout:
 }
 
 
-void writeJPEG(unsigned char *jpegBuf, unsigned long jpegSize, char *filename)
+static void writeJPEG(unsigned char *jpegBuf, unsigned long jpegSize,
+                      char *filename)
 {
   FILE *file = fopen(filename, "wb");
 
@@ -356,9 +359,9 @@ bailout:
 }
 
 
-void compTest(tjhandle handle, unsigned char **dstBuf, unsigned long *dstSize,
-              int w, int h, int pf, char *basename, int subsamp, int jpegQual,
-              int flags)
+static void compTest(tjhandle handle, unsigned char **dstBuf,
+                     unsigned long *dstSize, int w, int h, int pf,
+                     char *basename, int subsamp, int jpegQual, int flags)
 {
   char tempStr[1024];
   unsigned char *srcBuf = NULL, *yuvBuf = NULL;
@@ -414,9 +417,10 @@ bailout:
 }
 
 
-void _decompTest(tjhandle handle, unsigned char *jpegBuf,
-                 unsigned long jpegSize, int w, int h, int pf, char *basename,
-                 int subsamp, int flags, tjscalingfactor sf)
+static void _decompTest(tjhandle handle, unsigned char *jpegBuf,
+                        unsigned long jpegSize, int w, int h, int pf,
+                        char *basename, int subsamp, int flags,
+                        tjscalingfactor sf)
 {
   unsigned char *dstBuf = NULL, *yuvBuf = NULL;
   int _hdrw = 0, _hdrh = 0, _hdrsubsamp = -1;
@@ -481,9 +485,9 @@ bailout:
 }
 
 
-void decompTest(tjhandle handle, unsigned char *jpegBuf,
-                unsigned long jpegSize, int w, int h, int pf, char *basename,
-                int subsamp, int flags)
+static void decompTest(tjhandle handle, unsigned char *jpegBuf,
+                       unsigned long jpegSize, int w, int h, int pf,
+                       char *basename, int subsamp, int flags)
 {
   int i, n = 0;
   tjscalingfactor *sf = tjGetScalingFactors(&n);
@@ -505,8 +509,8 @@ bailout:
 }
 
 
-void doTest(int w, int h, const int *formats, int nformats, int subsamp,
-            char *basename)
+static void doTest(int w, int h, const int *formats, int nformats, int subsamp,
+                   char *basename)
 {
   tjhandle chandle = NULL, dhandle = NULL;
   unsigned char *dstBuf = NULL;
@@ -552,7 +556,7 @@ bailout:
 }
 
 
-void bufSizeTest(void)
+static void bufSizeTest(void)
 {
   int w, h, i, subsamp;
   unsigned char *srcBuf = NULL, *dstBuf = NULL;
@@ -633,8 +637,8 @@ bailout:
 }
 
 
-void initBitmap(unsigned char *buf, int width, int pitch, int height, int pf,
-                int flags)
+static void initBitmap(unsigned char *buf, int width, int pitch, int height,
+                       int pf, int flags)
 {
   int roffset = tjRedOffset[pf];
   int goffset = tjGreenOffset[pf];
@@ -667,8 +671,8 @@ void initBitmap(unsigned char *buf, int width, int pitch, int height, int pf,
 }
 
 
-int cmpBitmap(unsigned char *buf, int width, int pitch, int height, int pf,
-              int flags, int gray2rgb)
+static int cmpBitmap(unsigned char *buf, int width, int pitch, int height,
+                     int pf, int flags, int gray2rgb)
 {
   int roffset = tjRedOffset[pf];
   int goffset = tjGreenOffset[pf];
@@ -718,8 +722,8 @@ int cmpBitmap(unsigned char *buf, int width, int pitch, int height, int pf,
 }
 
 
-int doBmpTest(const char *ext, int width, int align, int height, int pf,
-              int flags)
+static int doBmpTest(const char *ext, int width, int align, int height, int pf,
+                     int flags)
 {
   char filename[80], *md5sum, md5buf[65];
   int ps = tjPixelSize[pf], pitch = PAD(width * ps, align), loadWidth = 0,
@@ -807,7 +811,7 @@ bailout:
 }
 
 
-int bmpTest(void)
+static int bmpTest(void)
 {
   int align, width = 35, height = 39, format;
 
@@ -844,6 +848,219 @@ int bmpTest(void)
   return 0;
 }
 
+#ifdef GTEST
+static void initTJUnitTest(int yuv, int noyuvpad, int autoalloc)
+{
+  doYUV = yuv ? 1 : 0;
+  pad = noyuvpad ? 1 : 4;
+  alloc = autoalloc ? 1 : 0;
+
+  exitStatus = 0;
+}
+
+
+int testBmp(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  return bmpTest();
+}
+
+
+int testThreeByte444(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(35, 39, _3byteFormats, 2, TJSAMP_444, "test");
+  return exitStatus;
+}
+
+
+int testFourByte444(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  int num4bf = doYUV ? 4 : 5;
+  doTest(39, 41, _4byteFormats, num4bf, TJSAMP_444, "test");
+  return exitStatus;
+}
+
+
+int testThreeByte422(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(41, 35, _3byteFormats, 2, TJSAMP_422, "test");
+  return exitStatus;
+}
+
+
+int testFourByte422(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  int num4bf = doYUV ? 4 : 5;
+  doTest(35, 39, _4byteFormats, num4bf, TJSAMP_422, "test");
+  return exitStatus;
+}
+
+
+int testThreeByte420(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(39, 41, _3byteFormats, 2, TJSAMP_420, "test");
+  return exitStatus;
+}
+
+
+int testFourByte420(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  int num4bf = doYUV ? 4 : 5;
+  doTest(41, 35, _4byteFormats, num4bf, TJSAMP_420, "test");
+  return exitStatus;
+}
+
+
+int testThreeByte440(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(35, 39, _3byteFormats, 2, TJSAMP_440, "test");
+  return exitStatus;
+}
+
+
+int testFourByte440(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  int num4bf = doYUV ? 4 : 5;
+  doTest(39, 41, _4byteFormats, num4bf, TJSAMP_440, "test");
+  return exitStatus;
+}
+
+
+int testThreeByte411(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(41, 35, _3byteFormats, 2, TJSAMP_411, "test");
+  return exitStatus;
+}
+
+
+int testFourByte411(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  int num4bf = doYUV ? 4 : 5;
+  doTest(35, 39, _4byteFormats, num4bf, TJSAMP_411, "test");
+  return exitStatus;
+}
+
+
+int testOnlyGray(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(39, 41, _onlyGray, 1, TJSAMP_GRAY, "test");
+  return exitStatus;
+}
+
+
+int testThreeByteGray(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(41, 35, _3byteFormats, 2, TJSAMP_GRAY, "test");
+  return exitStatus;
+}
+
+
+int testFourByteGray(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  doTest(35, 39, _4byteFormats, 4, TJSAMP_GRAY, "test");
+  return exitStatus;
+}
+
+
+int testBufSize(int yuv, int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(yuv, noyuvpad, autoalloc);
+
+  bufSizeTest();
+  return exitStatus;
+}
+
+
+int testYUVOnlyRGB444(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyRGB, 1, TJSAMP_444, "test_yuv0");
+  return exitStatus;
+}
+
+
+int testYUVOnlyRGB422(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyRGB, 1, TJSAMP_422, "test_yuv0");
+  return exitStatus;
+}
+
+
+int testYUVOnlyRGB420(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyRGB, 1, TJSAMP_420, "test_yuv0");
+  return exitStatus;
+}
+
+
+int testYUVOnlyRGB440(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyRGB, 1, TJSAMP_440, "test_yuv0");
+  return exitStatus;
+}
+
+
+int testYUVOnlyRGB411(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyRGB, 1, TJSAMP_411, "test_yuv0");
+  return exitStatus;
+}
+
+
+int testYUVOnlyRGBGray(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyRGB, 1, TJSAMP_GRAY, "test_yuv0");
+  return exitStatus;
+}
+
+
+int testYUVOnlyGrayGray(int noyuvpad, int autoalloc)
+{
+  initTJUnitTest(1, noyuvpad, autoalloc);
+
+  doTest(48, 48, _onlyGray, 1, TJSAMP_GRAY, "test_yuv0");
+  return exitStatus;
+}
+
+#else
 
 int main(int argc, char *argv[])
 {
@@ -890,3 +1107,4 @@ int main(int argc, char *argv[])
 
   return exitStatus;
 }
+#endif

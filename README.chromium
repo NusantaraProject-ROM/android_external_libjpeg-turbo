@@ -18,7 +18,7 @@ This consists of the components:
   https://github.com/libjpeg-turbo/libjpeg-turbo/commit/b46af82cc159bbd05312417d003cfab67c340156
 * Cherry picked checking the maximum supported CPUID leaf:
   https://github.com/libjpeg-turbo/libjpeg-turbo/commit/aa9db616774e24af7ab2fbcddd5711057b8a901e
-* Deleted unused directories: ci, cmakescripts, doc, java, md5, release, sharedlib,
+* Deleted unused directories: ci, cmakescripts, doc, java, release, sharedlib,
   simd/loongson, simd/mips, simd/powerpc, testimages, and win
 * Deleted unused files: appveyor.yml, Brewfile, CMakeLists.txt, doxygen.config,
   doxygen-extra.css, .gitattributes, tjexample.c, tjexampletest.java.in,
@@ -69,6 +69,9 @@ following changes which are not merged to upstream:
   - Implement slow IDCT using Arm NEON intrinsics
   - Precompute DCT block output pointers in IDCT functions
   - Implement fast IDCT using Arm NEON intrinsics
+* Patches to enable running the upstream unit tests through gtest. These
+  changes are tracked by Chromium issue: https://crbug.com/993876
+  - Refactor tjunittest.c to provide test interface
 
 Refer to working-with-nested-repos [1] for details of how to setup your git
 svn client to update the code (for making local changes, cherry picking from
