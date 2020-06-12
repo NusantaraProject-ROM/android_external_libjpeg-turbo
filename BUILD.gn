@@ -323,6 +323,8 @@ test("libjpeg_turbo_unittests") {
   testonly = true
 
   sources = [
+    "tjbench-gtest-wrapper.cpp",
+    "tjbench.c",
     "tjunittest-gtest-wrapper.cpp",
     "tjunittest.c",
     "tjutil.c",
@@ -332,8 +334,13 @@ test("libjpeg_turbo_unittests") {
 
   deps = [
     ":turbojpeg",
+    "//base",
     "//testing/gtest",
     "//testing/gtest:gtest_main",
+  ]
+
+  data = [
+    "testimages/"
   ]
 
   defines = [
