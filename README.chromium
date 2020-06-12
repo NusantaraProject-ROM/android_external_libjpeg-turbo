@@ -76,6 +76,7 @@ following changes which are not merged to upstream:
   - Move tjunittest logs from stdout to stderr
   - Refactor tjbench.c to provide test interface
   - Add gtest wrapper for tjbench tests
+  - Move tbench logs from stdout to stderr
 
 Refer to working-with-nested-repos [1] for details of how to setup your git
 svn client to update the code (for making local changes, cherry picking from
