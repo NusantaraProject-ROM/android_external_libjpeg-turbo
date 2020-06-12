@@ -43,8 +43,9 @@
 }
 #define _throwunix(m)  _throw(m, strerror(errno))
 
-char tjErrorStr[JMSG_LENGTH_MAX] = "\0", tjErrorMsg[JMSG_LENGTH_MAX] = "\0";
-int tjErrorLine = -1, tjErrorCode = -1;
+static char tjErrorStr[JMSG_LENGTH_MAX] = "\0",
+            tjErrorMsg[JMSG_LENGTH_MAX] = "\0";
+static int tjErrorLine = -1, tjErrorCode = -1;
 
 #define _throwtjg(m) { \
   printf("ERROR in line %d while %s:\n%s\n", __LINE__, m, \
@@ -74,28 +75,29 @@ int tjErrorLine = -1, tjErrorCode = -1;
   } \
 }
 
-int flags = TJFLAG_NOREALLOC, compOnly = 0, decompOnly = 0, doYUV = 0,
+static int flags = TJFLAG_NOREALLOC, compOnly = 0, decompOnly = 0, doYUV = 0,
   quiet = 0, doTile = 0, pf = TJPF_BGR, yuvPad = 1, doWrite = 1;
-char *ext = "ppm";
-const char *pixFormatStr[TJ_NUMPF] = {
+static char *ext = "ppm";
+static const char *pixFormatStr[TJ_NUMPF] = {
   "RGB", "BGR", "RGBX", "BGRX", "XBGR", "XRGB", "GRAY", "", "", "", "", "CMYK"
 };
-const char *subNameLong[TJ_NUMSAMP] = {
+static const char *subNameLong[TJ_NUMSAMP] = {
   "4:4:4", "4:2:2", "4:2:0", "GRAY", "4:4:0", "4:1:1"
 };
-const char *csName[TJ_NUMCS] = {
+static const char *csName[TJ_NUMCS] = {
   "RGB", "YCbCr", "GRAY", "CMYK", "YCCK"
 };
-const char *subName[TJ_NUMSAMP] = {
+static const char *subName[TJ_NUMSAMP] = {
   "444", "422", "420", "GRAY", "440", "411"
 };
-tjscalingfactor *scalingFactors = NULL, sf = { 1, 1 };
-int nsf = 0, xformOp = TJXOP_NONE, xformOpt = 0;
-int (*customFilter) (short *, tjregion, tjregion, int, int, tjtransform *);
-double benchTime = 5.0, warmup = 1.0;
+static tjscalingfactor *scalingFactors = NULL, sf = { 1, 1 };
+static int nsf = 0, xformOp = TJXOP_NONE, xformOpt = 0;
+static int (*customFilter) (short *, tjregion, tjregion, int, int,
+                            tjtransform *);
+static double benchTime = 5.0, warmup = 1.0;
 
 
-char *formatName(int subsamp, int cs, char *buf)
+static char *formatName(int subsamp, int cs, char *buf)
 {
   if (cs == TJCS_YCbCr)
     return (char *)subNameLong[subsamp];
@@ -107,7 +109,7 @@ char *formatName(int subsamp, int cs, char *buf)
 }
 
 
-char *sigfig(double val, int figs, char *buf, int len)
+static char *sigfig(double val, int figs, char *buf, int len)
 {
   char format[80];
   int digitsAfterDecimal = figs - (int)ceil(log10(fabs(val)));
@@ -122,9 +124,9 @@ char *sigfig(double val, int figs, char *buf, int len)
 
 
 /* Custom DCT filter which produces a negative of the image */
-int dummyDCTFilter(short *coeffs, tjregion arrayRegion, tjregion planeRegion,
-                   int componentIndex, int transformIndex,
-                   tjtransform *transform)
+static int dummyDCTFilter(short *coeffs, tjregion arrayRegion,
+                          tjregion planeRegion, int componentIndex,
+                          int transformIndex, tjtransform *transform)
 {
   int i;
 
@@ -135,9 +137,10 @@ int dummyDCTFilter(short *coeffs, tjregion arrayRegion, tjregion planeRegion,
 
 
 /* Decompression test */
-int decomp(unsigned char *srcBuf, unsigned char **jpegBuf,
-           unsigned long *jpegSize, unsigned char *dstBuf, int w, int h,
-           int subsamp, int jpegQual, char *fileName, int tilew, int tileh)
+static int decomp(unsigned char *srcBuf, unsigned char **jpegBuf,
+                  unsigned long *jpegSize, unsigned char *dstBuf, int w, int h,
+                  int subsamp, int jpegQual, char *fileName, int tilew,
+                  int tileh)
 {
   char tempStr[1024], sizeStr[20] = "\0", qualStr[6] = "\0", *ptr;
   FILE *file = NULL;
@@ -303,8 +306,8 @@ bailout:
 }
 
 
-int fullTest(unsigned char *srcBuf, int w, int h, int subsamp, int jpegQual,
-             char *fileName)
+static int fullTest(unsigned char *srcBuf, int w, int h, int subsamp,
+                    int jpegQual, char *fileName)
 {
   char tempStr[1024], tempStr2[80];
   FILE *file = NULL;
@@ -504,7 +507,7 @@ bailout:
 }
 
 
-int decompTest(char *fileName)
+static int decompTest(char *fileName)
 {
   FILE *file = NULL;
   tjhandle handle = NULL;
@@ -722,7 +725,7 @@ bailout:
 }
 
 
-void usage(char *progName)
+static void usage(char *progName)
 {
   int i;
 
@@ -793,7 +796,11 @@ void usage(char *progName)
 }
 
 
+#ifndef GTEST
 int main(int argc, char *argv[])
+#else
+int tjbench(int argc, char *argv[])
+#endif
 {
   unsigned char *srcBuf = NULL;
   int w = 0, h = 0, i, j, minQual = -1, maxQual = -1;
