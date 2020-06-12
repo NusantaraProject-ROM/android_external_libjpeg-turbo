@@ -19,7 +19,7 @@ This consists of the components:
 * Cherry picked checking the maximum supported CPUID leaf:
   https://github.com/libjpeg-turbo/libjpeg-turbo/commit/aa9db616774e24af7ab2fbcddd5711057b8a901e
 * Deleted unused directories: ci, cmakescripts, doc, java, release, sharedlib,
-  simd/loongson, simd/mips, simd/powerpc, testimages, and win
+  simd/loongson, simd/mips, simd/powerpc, and win
 * Deleted unused files: appveyor.yml, Brewfile, CMakeLists.txt, doxygen.config,
   doxygen-extra.css, .gitattributes, tjexample.c, tjexampletest.java.in,
   .travis.yml
