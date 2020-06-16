@@ -323,13 +323,18 @@ test("libjpeg_turbo_unittests") {
   testonly = true
 
   sources = [
+    "cdjpeg.c",
+    "cjpeg-gtest-wrapper.cpp",
+    "cjpeg.c",
     "tjbench-gtest-wrapper.cpp",
     "tjbench.c",
     "tjunittest-gtest-wrapper.cpp",
     "tjunittest.c",
     "tjutil.c",
     "md5/md5.c",
-    "md5/md5hl.c"
+    "md5/md5hl.c",
+    "rdgif.c",
+    "rdswitch.c",
   ]
 
   deps = [
@@ -345,6 +350,7 @@ test("libjpeg_turbo_unittests") {
 
   defines = [
     "GTEST",
+    "PPM_SUPPORTED",
   ]
 
   include_dirs = [
