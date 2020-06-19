@@ -97,6 +97,8 @@ static int doYUV = 0, alloc = 0, pad = 4;
 static int exitStatus = 0;
 #define bailout() { exitStatus = -1;  goto bailout; }
 
+static const size_t filePathSize = 1024;
+
 
 static void initBuf(unsigned char *buf, int w, int h, int pf, int flags)
 {
@@ -349,8 +351,13 @@ bailout:
 static void writeJPEG(unsigned char *jpegBuf, unsigned long jpegSize,
                       char *filename)
 {
+#if defined(ANDROID) && defined(GTEST)
+  char path[filePathSize];
+  snprintf(path, filePathSize, "/sdcard/%s", filename);
+  FILE *file = fopen(path, "wb");
+#else
   FILE *file = fopen(filename, "wb");
-
+#endif
   if (!file || fwrite(jpegBuf, jpegSize, 1, file) != 1) {
     fprintf(stderr, "ERROR: Could not write to %s.\n%s\n", filename,
             strerror(errno));
@@ -366,7 +373,7 @@ static void compTest(tjhandle handle, unsigned char **dstBuf,
                      unsigned long *dstSize, int w, int h, int pf,
                      char *basename, int subsamp, int jpegQual, int flags)
 {
-  char tempStr[1024];
+  char tempStr[filePathSize];
   unsigned char *srcBuf = NULL, *yuvBuf = NULL;
   const char *pfStr = pixFormatStr[pf];
   const char *buStrLong =
@@ -410,7 +417,7 @@ static void compTest(tjhandle handle, unsigned char **dstBuf,
                     jpegQual, flags));
   }
 
-  snprintf(tempStr, 1024, "%s_enc_%s_%s_%s_Q%d.jpg", basename, pfStr, buStr,
+  snprintf(tempStr, filePathSize, "%s_enc_%s_%s_%s_Q%d.jpg", basename, pfStr, buStr,
            subName[subsamp], jpegQual);
   writeJPEG(*dstBuf, *dstSize, tempStr);
   fprintf(stderr, "Done.\n  Result in %s\n", tempStr);
@@ -731,7 +738,8 @@ static int cmpBitmap(unsigned char *buf, int width, int pitch, int height,
 static int doBmpTest(const char *ext, int width, int align, int height, int pf,
                      int flags)
 {
-  char filename[80], *md5sum, md5buf[65];
+  const size_t filenameSize = 80;
+  char filename[filenameSize], *md5sum, md5buf[65];
   int ps = tjPixelSize[pf], pitch = PAD(width * ps, align), loadWidth = 0,
     loadHeight = 0, retval = 0, pixelFormat = pf;
   unsigned char *buf = NULL;
@@ -749,8 +757,13 @@ static int doBmpTest(const char *ext, int width, int align, int height, int pf,
     _throw("Could not allocate memory");
   initBitmap(buf, width, pitch, height, pf, flags);
 
-  snprintf(filename, 80, "test_bmp_%s_%d_%s.%s", pixFormatStr[pf], align,
+#if defined(ANDROID) && defined(GTEST)
+  snprintf(filename, filenameSize, "/sdcard/test_bmp_%s_%d_%s.%s", pixFormatStr[pf],
+           align, (flags & TJFLAG_BOTTOMUP) ? "bu" : "td", ext);
+#else
+  snprintf(filename, filenameSize, "test_bmp_%s_%d_%s.%s", pixFormatStr[pf], align,
            (flags & TJFLAG_BOTTOMUP) ? "bu" : "td", ext);
+#endif
   _tj(tjSaveImage(filename, buf, width, pitch, height, pf, flags));
   md5sum = MD5File(filename, md5buf);
   if (strcasecmp(md5sum, md5ref))
