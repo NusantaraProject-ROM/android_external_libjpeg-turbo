@@ -78,6 +78,7 @@ following changes which are not merged to upstream:
   - Add gtest wrapper for tjbench tests
   - Move tbench logs from stdout to stderr
   - Write tjunittest output files to sdcard on Android
+  - Refactor cjpeg.c to provide test interface
 
 Refer to working-with-nested-repos [1] for details of how to setup your git
 svn client to update the code (for making local changes, cherry picking from
