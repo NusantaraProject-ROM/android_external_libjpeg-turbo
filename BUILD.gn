@@ -326,15 +326,18 @@ test("libjpeg_turbo_unittests") {
     "cdjpeg.c",
     "cjpeg-gtest-wrapper.cpp",
     "cjpeg.c",
+    "djpeg-gtest-wrapper.cpp",
+    "djpeg.c",
     "jpegtran-gtest-wrapper.cpp",
     "jpegtran.c",
+    "md5/md5.c",
+    "md5/md5hl.c",
     "tjbench-gtest-wrapper.cpp",
     "tjbench.c",
     "tjunittest-gtest-wrapper.cpp",
     "tjunittest.c",
     "tjutil.c",
-    "md5/md5.c",
-    "md5/md5hl.c",
+    "rdcolmap.c",
     "rdgif.c",
     "rdswitch.c",
   ]
@@ -352,6 +355,7 @@ test("libjpeg_turbo_unittests") {
 
   defines = [
     "GTEST",
+    "BMP_SUPPORTED",
     "PPM_SUPPORTED",
   ]
 
