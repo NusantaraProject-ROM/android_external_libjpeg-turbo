@@ -328,6 +328,7 @@ test("libjpeg_turbo_unittests") {
     "djpeg.c",
     "gtest/cjpeg-gtest-wrapper.cpp",
     "gtest/djpeg-gtest-wrapper.cpp",
+    "gtest/gtest-utils.cpp",
     "gtest/jpegtran-gtest-wrapper.cpp",
     "gtest/tjbench-gtest-wrapper.cpp",
     "gtest/tjunittest-gtest-wrapper.cpp",

@@ -20,23 +20,13 @@
 
 #include "base/files/file.h"
 #include "base/files/file_util.h"
-#include "base/hash/md5.h"
 #include "base/path_service.h"
+#include "gtest-utils.h"
 
 #include <gtest/gtest.h>
 #include <string>
 
 extern "C" int tjbench(int argc, char *argv[]);
-
-static std::string GetTargetDirectory() {
-#if defined(ANDROID)
-  return "/sdcard";
-#else
-  base::FilePath path;
-  base::PathService::Get(base::DIR_CURRENT, &path);
-  return path.MaybeAsASCII();
-#endif
-}
 
 // Test image files and their expected MD5 sums.
 const static std::vector<std::pair<const std::string,

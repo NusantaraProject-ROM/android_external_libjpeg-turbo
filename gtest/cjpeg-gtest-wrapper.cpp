@@ -20,43 +20,13 @@
 
 #include "base/files/file.h"
 #include "base/files/file_util.h"
-#include "base/hash/md5.h"
 #include "base/path_service.h"
+#include "gtest-utils.h"
 
 #include <gtest/gtest.h>
 #include <string>
 
 extern "C" int cjpeg(int argc, char *argv[]);
-
-static std::string GetTargetDirectory() {
-#if defined(ANDROID)
-  return "/sdcard";
-#else
-  base::FilePath path;
-  base::PathService::Get(base::DIR_CURRENT, &path);
-  return path.MaybeAsASCII();
-#endif
-}
-
-static void GetTestFilePath(base::FilePath* path, std::string filename) {
-  ASSERT_TRUE(base::PathService::Get(base::DIR_SOURCE_ROOT, path));
-  *path = path->AppendASCII("third_party");
-  *path = path->AppendASCII("libjpeg_turbo");
-  *path = path->AppendASCII("testimages");
-  *path = path->AppendASCII(filename);
-  ASSERT_TRUE(base::PathExists(*path));
-}
-
-static bool CompareFileAndMD5(const base::FilePath& path,
-                              const std::string expected_md5) {
-  // Read the output file and compute the MD5.
-  std::string output;
-  if (!base::ReadFileToString(path, &output)) {
-    return false;
-  }
-  const std::string md5 = base::MD5String(output);
-  return expected_md5 == md5;
-}
 
 TEST(CJPEGTest, RGBISlow) {
 
