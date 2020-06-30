@@ -75,6 +75,7 @@ cc_defaults {
             srcs: [
                 "simd/arm/arm/jsimd.c",
                 "simd/arm/arm/jsimd_neon.S",
+                "simd/arm/common/jcsample-neon.c",
                 "simd/arm/common/jdcolor-neon.c",
                 "simd/arm/common/jdmerge-neon.c",
                 "simd/arm/common/jdsample-neon.c",
@@ -88,6 +89,7 @@ cc_defaults {
             srcs: [
                 "simd/arm/arm64/jsimd.c",
                 "simd/arm/arm64/jsimd_neon.S",
+                "simd/arm/common/jcsample-neon.c",
                 "simd/arm/common/jdcolor-neon.c",
                 "simd/arm/common/jdmerge-neon.c",
                 "simd/arm/common/jdsample-neon.c",
