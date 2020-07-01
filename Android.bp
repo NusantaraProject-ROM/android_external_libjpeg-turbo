@@ -84,6 +84,7 @@ cc_defaults {
                 "simd/arm/common/jidctfst-neon.c",
                 "simd/arm/common/jidctint-neon.c",
                 "simd/arm/common/jidctred-neon.c",
+                "simd/arm/common/jquanti-neon.c",
             ],
         },
         arm64: {
@@ -100,6 +101,7 @@ cc_defaults {
                 "simd/arm/common/jidctfst-neon.c",
                 "simd/arm/common/jidctint-neon.c",
                 "simd/arm/common/jidctred-neon.c",
+                "simd/arm/common/jquanti-neon.c",
             ],
         },
         x86: {
