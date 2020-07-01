@@ -164,6 +164,7 @@ static_library("simd") {
       "simd/arm/common/jidctfst-neon.c",
       "simd/arm/common/jidctint-neon.c",
       "simd/arm/common/jidctred-neon.c",
+      "simd/arm/common/jquanti-neon.c",
     ]
     configs -= [ "//build/config/compiler:default_optimization" ]
     configs += [ "//build/config/compiler:optimize_speed" ]
@@ -180,6 +181,7 @@ static_library("simd") {
       "simd/arm/common/jidctfst-neon.c",
       "simd/arm/common/jidctint-neon.c",
       "simd/arm/common/jidctred-neon.c",
+      "simd/arm/common/jquanti-neon.c",
     ]
     configs -= [ "//build/config/compiler:default_optimization" ]
     configs += [ "//build/config/compiler:optimize_speed" ]
