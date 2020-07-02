@@ -79,6 +79,7 @@ following changes which are not merged to upstream:
   - Implement sample conversion using Arm NEON intrinsics
   - Implement quantization using Arm NEON intrinsics
   - Implement fast DCT using Arm NEON intrinsics
+  - Implement accurate DCT using Arm NEON intrinsics
 * Patches to enable running the upstream unit tests through gtest.
   The upstream unit tests are defined here under the section 'TESTS':
   https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/CMakeLists.txt
