@@ -192,7 +192,7 @@ config("libjpeg_config") {
   include_dirs = [ "." ]
 }
 
-source_set("libjpeg_sources") {
+static_library("libjpeg") {
   sources = [
     "jcapimin.c",
     "jcapistd.c",
@@ -250,12 +250,7 @@ source_set("libjpeg_sources") {
     "jutils.c",
     "jversion.h",
   ]
-}
 
-static_library("libjpeg") {
-  deps = [
-    ":libjpeg_sources"
-  ]
   defines = [
     "WITH_SIMD",
     "NO_GETENV",
@@ -289,10 +284,6 @@ static_library("turbojpeg") {
     "wrppm.c",
   ]
 
-  deps = [
-    ":libjpeg_sources"
-  ]
-
   defines = [
     "WITH_SIMD",
     "BMP_SUPPORTED",
@@ -303,7 +294,7 @@ static_library("turbojpeg") {
 
   public_configs = [ ":libjpeg_config" ]
   public_deps = [
-    ":libjpeg_headers",
+    ":libjpeg",
   ]
 
   # MemorySanitizer doesn't support assembly code, so keep it disabled in
