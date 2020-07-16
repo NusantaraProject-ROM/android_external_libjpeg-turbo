@@ -18,8 +18,16 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#include "base/strings/utf_string_conversions.h"
 #include "gtest-utils.h"
 
+#if defined(OS_WIN)
+std::wstring GetTargetDirectory() {
+  base::FilePath path;
+  base::PathService::Get(base::DIR_CURRENT, &path);
+  return base::UTF8ToWide(path.MaybeAsASCII());
+}
+#else
 std::string GetTargetDirectory() {
 #if defined(ANDROID)
   return "/sdcard";
@@ -29,6 +37,7 @@ std::string GetTargetDirectory() {
   return path.MaybeAsASCII();
 #endif
 }
+#endif
 
 void GetTestFilePath(base::FilePath* path, const std::string filename) {
   ASSERT_TRUE(base::PathService::Get(base::DIR_SOURCE_ROOT, path));

@@ -34,7 +34,7 @@ TEST(CJPEGTest, RGBISlow) {
   GetTestFilePath(&icc_path, "test1.icc");
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_rgb_islow.jpg");
 
   std::string prog_name = "cjpeg";
@@ -63,7 +63,7 @@ TEST(CJPEGTest, IFastOpt422) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_422_ifast_opt.jpg");
 
   std::string prog_name = "cjpeg";
@@ -94,7 +94,7 @@ TEST(CJPEGTest, IFastProg420Q100) {
   GetTestFilePath(&scans_path, "test.scan");
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_q100_ifast_prog.jpg");
 
   std::string prog_name = "cjpeg";
@@ -127,7 +127,7 @@ TEST(CJPEGTest, GrayISlow) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_gray_islow.jpg");
 
   std::string prog_name = "cjpeg";
@@ -154,7 +154,7 @@ TEST(CJPEGTest, IFastOpt420S) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420s_ifast_opt.jpg");
 
   std::string prog_name = "cjpeg";
@@ -218,7 +218,7 @@ TEST(CJPEGTest, IFastProg3x2) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_3x2_ifast_prog.jpg");
 
   std::string prog_name = "cjpeg";
@@ -248,7 +248,7 @@ TEST(CJPEGTest, ISlowAri420) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_ari.jpg");
 
   std::string prog_name = "cjpeg";
@@ -275,7 +275,7 @@ TEST(CJPEGTest, ISlowProgAri444) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_444_islow_progari.jpg");
 
   std::string prog_name = "cjpeg";
@@ -305,7 +305,7 @@ TEST(CJPEGTest, ISlowAri444) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_444_islow_ari.jpg");
 
   std::string prog_name = "cjpeg";
@@ -335,7 +335,7 @@ TEST(CJPEGTest, ISlowProg420) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_prog.jpg");
 
   std::string prog_name = "cjpeg";
@@ -362,7 +362,7 @@ TEST(CJPEGTest, ISlow444) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_444_islow.jpg");
 
   std::string prog_name = "cjpeg";
@@ -390,7 +390,7 @@ TEST(CJPEGTest, ISlowProg444) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.ppm");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_444_islow_prog.jpg");
 
   std::string prog_name = "cjpeg";

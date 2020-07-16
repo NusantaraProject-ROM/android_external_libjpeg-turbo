@@ -34,7 +34,7 @@ TEST(JPEGTranTest, ICC) {
   GetTestFilePath(&input_image_path, "testout_rgb_islow.jpg");
   base::FilePath icc_path;
   GetTestFilePath(&icc_path, "test2.icc");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_rgb_islow2.jpg");
 
   std::string prog_name = "jpegtran";
@@ -62,7 +62,7 @@ TEST(JPEGTranTest, Crop) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_crop.jpg");
 
   std::string prog_name = "jpegtran";
@@ -91,7 +91,7 @@ TEST(JPEGTranTest, ISlow420Ari) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testimgint.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_ari2.jpg");
 
   std::string prog_name = "jpegtran";
@@ -115,7 +115,7 @@ TEST(JPEGTranTest, ISlow420) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testimgari.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow.jpg");
 
   std::string prog_name = "jpegtran";

@@ -33,7 +33,11 @@
 // Returns the absolute path of the test output directory as a string.
 // On Android this path is /sdcard; on all other platforms it is the current
 // directory.
+#if defined(OS_WIN)
+std::wstring GetTargetDirectory();
+#else
 std::string GetTargetDirectory();
+#endif
 
 // Files used as input for libjpeg-turbo unit tests are stored in
 // <chromium>/src/third_party/libjpeg_turbo/testimages.

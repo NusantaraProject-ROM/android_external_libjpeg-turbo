@@ -66,7 +66,7 @@ TEST_P(DJPEGTestScalingDCT, Test) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII(std::get<1>(GetParam()));
 
   std::string prog_name = "djpeg";
@@ -99,7 +99,7 @@ TEST(DJPEGTest, ISlow420256) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_256.bmp");
 
   std::string prog_name = "djpeg";
@@ -128,7 +128,7 @@ TEST(DJPEGTest, ISlow420565) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_565.bmp");
 
   std::string prog_name = "djpeg";
@@ -158,7 +158,7 @@ TEST(DJPEGTest, ISlow420565D) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_565D.bmp");
 
   std::string prog_name = "djpeg";
@@ -186,7 +186,7 @@ TEST(DJPEGTest, ISlow420M565) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420m_islow_565.bmp");
 
   std::string prog_name = "djpeg";
@@ -217,7 +217,7 @@ TEST(DJPEGTest, ISlow420M565D) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420m_islow_565D.bmp");
 
   std::string prog_name = "djpeg";
@@ -246,7 +246,7 @@ TEST(DJPEGTest, ISlow420Skip1531) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testorig.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_islow_skip15_31.ppm");
 
   std::string prog_name = "djpeg";
@@ -276,7 +276,7 @@ TEST(DJPEGTest, ISlow420AriSkip16139) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testimgari.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII(
                               "testout_420_islow_ari_skip16_139.ppm");
 
@@ -306,7 +306,7 @@ TEST(DJPEGTest, ISlow420AriCrop53x5344) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testimgari.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII(
                               "testout_420_islow_ari_crop53x53_4_4.ppm");
 
@@ -336,7 +336,7 @@ TEST(DJPEGTest, IFast420MAri) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testimgari.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420m_ifast_ari.ppm");
 
   std::string prog_name = "djpeg";
@@ -361,7 +361,7 @@ TEST(DJPEGTest, ISlow444AriCrop37x3700) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_444_islow_ari.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII(
                               "testout_444_islow_ari_crop37x37_0_0.ppm");
 
@@ -392,9 +392,9 @@ TEST(DJPEGTest, RGBISlow) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_rgb_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_rgb_islow.ppm");
-  base::FilePath output_icc_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_icc_path(GetTargetDirectory());
   output_icc_path = output_icc_path.AppendASCII("testout_rgb_islow.icc");
 
   std::string prog_name = "djpeg";
@@ -425,7 +425,7 @@ TEST(DJPEGTest, RGBISlow565) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_rgb_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_rgb_islow_565.bmp");
 
   std::string prog_name = "djpeg";
@@ -455,7 +455,7 @@ TEST(DJPEGTest, RGBISlow565D) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_rgb_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_rgb_islow_565D.bmp");
 
   std::string prog_name = "djpeg";
@@ -483,7 +483,7 @@ TEST(DJPEGTest, IFast422) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_422_ifast_opt.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_422_ifast.ppm");
 
   std::string prog_name = "djpeg";
@@ -508,7 +508,7 @@ TEST(DJPEGTest, IFast422M) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_422_ifast_opt.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_422m_ifast.ppm");
 
   std::string prog_name = "djpeg";
@@ -535,7 +535,7 @@ TEST(DJPEGTest, IFast422M565) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_422_ifast_opt.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_422m_ifast_565.bmp");
 
   std::string prog_name = "djpeg";
@@ -566,7 +566,7 @@ TEST(DJPEGTest, IFast422M565D) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_422_ifast_opt.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_422m_ifast_565D.bmp");
 
   std::string prog_name = "djpeg";
@@ -595,7 +595,7 @@ TEST(DJPEGTest, IFastProg420Q100) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_420_q100_ifast_prog.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420_q100_ifast.ppm");
 
   std::string prog_name = "djpeg";
@@ -620,7 +620,7 @@ TEST(DJPEGTest, IFastProg420MQ100) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_420_q100_ifast_prog.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_420m_q100_ifast.ppm");
 
   std::string prog_name = "djpeg";
@@ -647,7 +647,7 @@ TEST(DJPEGTest, GrayISlow) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_gray_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_gray_islow.ppm");
 
   std::string prog_name = "djpeg";
@@ -672,7 +672,7 @@ TEST(DJPEGTest, GrayISlowRGB) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_gray_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_gray_islow_rgb.ppm");
 
   std::string prog_name = "djpeg";
@@ -699,7 +699,7 @@ TEST(DJPEGTest, GrayISlow565) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_gray_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_gray_islow_565.bmp");
 
   std::string prog_name = "djpeg";
@@ -729,7 +729,7 @@ TEST(DJPEGTest, GrayISlow565D) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_gray_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_gray_islow_565D.bmp");
 
   std::string prog_name = "djpeg";
@@ -763,7 +763,7 @@ TEST(DJPEGTest, FloatProg3x2) {
 #else
 #error "Unknown platform."
 #endif
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_3x2_float.ppm");
 
   std::string prog_name = "djpeg";
@@ -794,7 +794,7 @@ TEST(DJPEGTest, IFastProg3x2) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_3x2_ifast_prog.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_3x2_ifast.ppm");
 
   std::string prog_name = "djpeg";
@@ -819,7 +819,7 @@ TEST(DJPEGTest, ISlowProgCrop62x627171) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_420_islow_prog.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII(
                               "testout_420_islow_prog_crop62x62_71_71.ppm");
 
@@ -849,7 +849,7 @@ TEST(DJPEGTest, ISlow444Skip16) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_444_islow.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_444_islow_skip1_6.ppm");
 
   std::string prog_name = "djpeg";
@@ -878,7 +878,7 @@ TEST(DJPEGTest, ISlowProg444Crop98x981313) {
 
   base::FilePath input_image_path;
   GetTestFilePath(&input_image_path, "testout_444_islow_prog.jpg");
-  base::FilePath output_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII(
                               "testout_444_islow_prog_crop98x98_13_13.ppm");
 

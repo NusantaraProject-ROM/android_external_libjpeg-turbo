@@ -67,7 +67,7 @@ class TJBenchTest : public
     resource_path = resource_path.AppendASCII("testorig.ppm");
     ASSERT_TRUE(base::PathExists(resource_path));
 
-    base::FilePath target_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+    base::FilePath target_path(GetTargetDirectory());
     target_path = target_path.AppendASCII("testout_tile.ppm");
 
     ASSERT_TRUE(base::CopyFile(resource_path, target_path));
@@ -94,7 +94,7 @@ class TJBenchTest : public
 
 TEST_P(TJBenchTest, TestTileBaseline) {
   // Construct path for test image file.
-  base::FilePath test_image_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath test_image_path(GetTargetDirectory());
   test_image_path = test_image_path.AppendASCII(std::get<0>(GetParam()));
   // Read test image as string and compute MD5 sum.
   std::string test_image_data;
@@ -137,7 +137,7 @@ class TJBenchTestMerged : public
     resource_path = resource_path.AppendASCII("testorig.ppm");
     ASSERT_TRUE(base::PathExists(resource_path));
 
-    base::FilePath target_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+    base::FilePath target_path(GetTargetDirectory());
     target_path = target_path.AppendASCII("testout_tilem.ppm");
 
     ASSERT_TRUE(base::CopyFile(resource_path, target_path));
@@ -165,7 +165,7 @@ class TJBenchTestMerged : public
 
 TEST_P(TJBenchTestMerged, TestTileMerged) {
   // Construct path for test image file.
-  base::FilePath test_image_path(FILE_PATH_LITERAL(GetTargetDirectory()));
+  base::FilePath test_image_path(GetTargetDirectory());
   test_image_path = test_image_path.AppendASCII(std::get<0>(GetParam()));
   // Read test image as string and compute MD5 sum.
   std::string test_image_data;
