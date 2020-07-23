@@ -296,14 +296,6 @@ static_library("turbojpeg") {
   public_deps = [
     ":libjpeg",
   ]
-
-  # MemorySanitizer doesn't support assembly code, so keep it disabled in
-  # MSan builds for now.
-  if (is_msan) {
-    sources += [ "jsimd_none.c" ]
-  } else {
-    public_deps += [ ":simd" ]
-  }
 }
 
 if (build_with_chromium) {
