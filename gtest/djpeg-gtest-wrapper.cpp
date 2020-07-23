@@ -756,12 +756,10 @@ TEST(DJPEGTest, GrayISlow565D) {
 TEST(DJPEGTest, FloatProg3x2) {
 
   base::FilePath input_image_path;
-#if defined(__arm__) || defined(__aarch64__)
-  GetTestFilePath(&input_image_path, "testout_3x2_float_prog_arm.jpg");
-#elif defined(__i386__) || defined(__x86_64__)
-  GetTestFilePath(&input_image_path, "testout_3x2_float_prog_intel.jpg");
+#if defined(WITH_SIMD) && (defined(__i386__) || defined(__x86_64__))
+  GetTestFilePath(&input_image_path, "testout_3x2_float_prog_sse.jpg");
 #else
-#error "Unknown platform."
+  GetTestFilePath(&input_image_path, "testout_3x2_float_prog.jpg");
 #endif
   base::FilePath output_path(GetTargetDirectory());
   output_path = output_path.AppendASCII("testout_3x2_float.ppm");
@@ -780,12 +778,10 @@ TEST(DJPEGTest, FloatProg3x2) {
   EXPECT_EQ(djpeg(6, command_line), 0);
 
   // Compare expected MD5 sum against that of test image.
-#if defined(__arm__) || defined(__aarch64__)
-  const std::string EXPECTED_MD5 = "f6bfab038438ed8f5522fbd33595dcdc";
-#elif defined(__i386__) || defined(__x86_64__)
+#if defined(WITH_SIMD) && (defined(__i386__) || defined(__x86_64__))
   const std::string EXPECTED_MD5 = "1a75f36e5904d6fc3a85a43da9ad89bb";
 #else
-#error "Unknown platform."
+  const std::string EXPECTED_MD5 = "f6bfab038438ed8f5522fbd33595dcdc";
 #endif
   EXPECT_TRUE(CompareFileAndMD5(output_path, EXPECTED_MD5));
 }

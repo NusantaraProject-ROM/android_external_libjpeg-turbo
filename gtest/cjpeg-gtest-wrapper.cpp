@@ -206,10 +206,10 @@ TEST(CJPEGTest, FloatProg3x2) {
   EXPECT_EQ(cjpeg(9, command_line), 0);
 
   // Compare expected MD5 sum against that of test image.
-#if defined(__arm__) || defined(__aarch64__)
-  const std::string EXPECTED_MD5 = "9bca803d2042bd1eb03819e2bf92b3e5";
-#else
+#if defined(WITH_SIMD) && (defined(__i386__) || defined(__x86_64__))
   const std::string EXPECTED_MD5 = "343e3f8caf8af5986ebaf0bdc13b5c71";
+#else
+  const std::string EXPECTED_MD5 = "9bca803d2042bd1eb03819e2bf92b3e5";
 #endif
   EXPECT_TRUE(CompareFileAndMD5(output_path, EXPECTED_MD5));
 }

@@ -346,6 +346,7 @@ if (build_with_chromium) {
 
     defines = [
       "GTEST",
+      "WITH_SIMD",
       "BMP_SUPPORTED",
       "PPM_SUPPORTED",
     ]
