@@ -1,6 +1,6 @@
 Name: libjpeg-turbo
 URL: https://github.com/libjpeg-turbo/libjpeg-turbo/
-Version: 2.0.1
+Version: 2.0.5
 License: Custom license
 License File: LICENSE.md
 Security Critical: yes
@@ -8,19 +8,17 @@ License Android Compatible: yes
 
 Description:
 This consists of the components:
-* libjpeg-turbo 2.0.1
+* libjpeg-turbo 2.0.5
 * This file (README.chromium)
 * A build file (BUILD.gn)
 * An OWNERS file
 * A codereview.settings file
 * Patched header files used by Chromium
-* Cherry picked an unused variable/function warning from upstream master:
-  https://github.com/libjpeg-turbo/libjpeg-turbo/commit/b46af82cc159bbd05312417d003cfab67c340156
-* Cherry picked checking the maximum supported CPUID leaf:
-  https://github.com/libjpeg-turbo/libjpeg-turbo/commit/aa9db616774e24af7ab2fbcddd5711057b8a901e
+* Cherry picked a fix from upstream master to enable AArch64 Windows builds:
+  https://github.com/libjpeg-turbo/libjpeg-turbo/commit/6ee5d5f568fda1a7c6a49dd8995f2d89866ee42d
 * Deleted unused directories: ci, cmakescripts, doc, java, release, sharedlib,
   simd/loongson, simd/mips, simd/powerpc, and win
-* Deleted unused files: appveyor.yml, Brewfile, CMakeLists.txt, doxygen.config,
+* Deleted unused files: appveyor.yml, CMakeLists.txt, doxygen.config,
   doxygen-extra.css, .gitattributes, tjexample.c, tjexampletest.java.in,
   .travis.yml
 

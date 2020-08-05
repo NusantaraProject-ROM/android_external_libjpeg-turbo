@@ -686,12 +686,10 @@ main(int argc, char **argv)
 
   if (memdst) {
     fprintf(stderr, "Compressed size:  %lu bytes\n", outsize);
-    if (outbuffer != NULL)
-      free(outbuffer);
+    free(outbuffer);
   }
 
-  if (icc_profile != NULL)
-    free(icc_profile);
+  free(icc_profile);
 
   /* All done. */
   return (jerr.num_warnings ? EXIT_WARNING : EXIT_SUCCESS);
