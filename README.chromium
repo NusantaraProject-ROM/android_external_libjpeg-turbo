@@ -48,7 +48,11 @@ following changes which are not merged to upstream:
   in the header instead of static const and moving the definition to
   a new .c file fixes this so only one copy is referenced. Also added
   extern wrappers around usage in asm files. The jpeg_nbits_table.inc
-  file was also deleted.
+  file was also deleted. It was also necessary to give this table hidden
+  visibility to avoid invalid relocations (ignored by ld but rejected by
+  lld) arising from attempts to reference the table from assembler on
+  32-bit x86. This only affects shared libraries, but that's important
+  for downstream Android builds.
 * Arm NEON patches to improve performance and maintainability. These changes
   are tracked by the following Chromium issue: https://crbug.com/922430
   - Add memory alignment size check in jmemmgr.c
