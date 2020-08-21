@@ -32,122 +32,23 @@
 #endif
 
 #if defined(__APPLE__)
-.section __DATA,__const
+.section __DATA, __const
+#elif defined(_WIN32)
+.section .rdata
 #else
 .section .rodata, "a", %progbits
 #endif
 
-#define F_0_298   2446  /* FIX(0.298631336) */
-#define F_0_390   3196  /* FIX(0.390180644) */
-#define F_0_541   4433  /* FIX(0.541196100) */
-#define F_0_765   6270  /* FIX(0.765366865) */
-#define F_0_899   7373  /* FIX(0.899976223) */
-#define F_1_175   9633  /* FIX(1.175875602) */
-#define F_1_501  12299  /* FIX(1.501321110) */
-#define F_1_847  15137  /* FIX(1.847759065) */
-#define F_1_961  16069  /* FIX(1.961570560) */
-#define F_2_053  16819  /* FIX(2.053119869) */
-#define F_2_562  20995  /* FIX(2.562915447) */
-#define F_3_072  25172  /* FIX(3.072711026) */
+/* Constants for jsimd_*_ycc_neon() */
 
 .balign 16
-Ljsimd_idct_islow_neon_consts:
-  .short F_0_298
-  .short -F_0_390
-  .short F_0_541
-  .short F_0_765
-  .short - F_0_899
-  .short F_1_175
-  .short F_1_501
-  .short - F_1_847
-  .short - F_1_961
-  .short F_2_053
-  .short - F_2_562
-  .short F_3_072
-  .short 0          /* padding */
-  .short 0
-  .short 0
-  .short 0
-
-#undef F_0_298
-#undef F_0_390
-#undef F_0_541
-#undef F_0_765
-#undef F_0_899
-#undef F_1_175
-#undef F_1_501
-#undef F_1_847
-#undef F_1_961
-#undef F_2_053
-#undef F_2_562
-#undef F_3_072
-
-
-#define XFIX_1_082392200  v0.h[0]
-#define XFIX_1_414213562  v0.h[1]
-#define XFIX_1_847759065  v0.h[2]
-#define XFIX_2_613125930  v0.h[3]
-
-.balign 16
-Ljsimd_idct_ifast_neon_consts:
-  .short (277 * 128 - 256 * 128)  /* XFIX_1_082392200 */
-  .short (362 * 128 - 256 * 128)  /* XFIX_1_414213562 */
-  .short (473 * 128 - 256 * 128)  /* XFIX_1_847759065 */
-  .short (669 * 128 - 512 * 128)  /* XFIX_2_613125930 */
-
-#define CONST_BITS  13
-#define PASS1_BITS  2
-
-#define FIX_0_211164243  (1730)   /* FIX(0.211164243) */
-#define FIX_0_509795579  (4176)   /* FIX(0.509795579) */
-#define FIX_0_601344887  (4926)   /* FIX(0.601344887) */
-#define FIX_0_720959822  (5906)   /* FIX(0.720959822) */
-#define FIX_0_765366865  (6270)   /* FIX(0.765366865) */
-#define FIX_0_850430095  (6967)   /* FIX(0.850430095) */
-#define FIX_0_899976223  (7373)   /* FIX(0.899976223) */
-#define FIX_1_061594337  (8697)   /* FIX(1.061594337) */
-#define FIX_1_272758580  (10426)  /* FIX(1.272758580) */
-#define FIX_1_451774981  (11893)  /* FIX(1.451774981) */
-#define FIX_1_847759065  (15137)  /* FIX(1.847759065) */
-#define FIX_2_172734803  (17799)  /* FIX(2.172734803) */
-#define FIX_2_562915447  (20995)  /* FIX(2.562915447) */
-#define FIX_3_624509785  (29692)  /* FIX(3.624509785) */
-
-.balign 16
-Ljsimd_idct_4x4_neon_consts:
-  .short FIX_1_847759065        /* v0.h[0] */
-  .short -FIX_0_765366865       /* v0.h[1] */
-  .short -FIX_0_211164243       /* v0.h[2] */
-  .short FIX_1_451774981        /* v0.h[3] */
-  .short -FIX_2_172734803       /* d1[0] */
-  .short FIX_1_061594337        /* d1[1] */
-  .short -FIX_0_509795579       /* d1[2] */
-  .short -FIX_0_601344887       /* d1[3] */
-  .short FIX_0_899976223        /* v2.h[0] */
-  .short FIX_2_562915447        /* v2.h[1] */
-  .short 1 << (CONST_BITS + 1)  /* v2.h[2] */
-  .short 0                      /* v2.h[3] */
-
-.balign 8
-Ljsimd_idct_2x2_neon_consts:
-  .short -FIX_0_720959822  /* v14[0] */
-  .short FIX_0_850430095   /* v14[1] */
-  .short -FIX_1_272758580  /* v14[2] */
-  .short FIX_3_624509785   /* v14[3] */
-
-.balign 16
-Ljsimd_ycc_colorid_neon_consts:
-  .short 0,      0,     0,      0
-  .short 22971, -11277, -23401, 29033
-  .short -128,  -128,   -128,   -128
-  .short -128,  -128,   -128,   -128
-
-.balign 16
-Ljsimd_colorid_ycc_neon_consts:
+Ljsimd_rgb_ycc_neon_consts:
   .short 19595, 38470, 7471, 11059
   .short 21709, 32768, 27439, 5329
   .short 32767, 128, 32767, 128
   .short 32767, 128, 32767, 128
+
+/* Constants for jsimd_fdct_islow_neon() */
 
 #define F_0_298   2446  /* FIX(0.298631336) */
 #define F_0_390   3196  /* FIX(0.390180644) */
@@ -194,6 +95,8 @@ Ljsimd_fdct_islow_neon_consts:
 #undef F_2_562
 #undef F_3_072
 
+/* Constants for jsimd_fdct_ifast_neon() */
+
 .balign 16
 Ljsimd_fdct_ifast_neon_consts:
   .short (98 * 128)               /* XFIX_0_382683433 */
@@ -201,6 +104,9 @@ Ljsimd_fdct_ifast_neon_consts:
   .short (181 * 128)              /* XFIX_0_707106781 */
   .short (334 * 128 - 256 * 128)  /* XFIX_1_306562965 */
 
+/* Constants for jsimd_huff_encode_one_block_neon() */
+
+.balign 16
 Ljsimd_huff_encode_one_block_neon_consts:
     .byte 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, \
           0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80
@@ -228,9 +134,6 @@ Ljsimd_huff_encode_one_block_neon_consts:
            255, 255, 255, 255,   8,   9,  22,  23  /* L5 => L6 : 2 lines OK */
     .byte    4,   5,   6,   7, 255, 255, 255, 255, \
            255, 255, 255, 255, 255, 255, 255, 255  /* L7 : 1 line OK */
-Ljsimd_huff_encode_one_block_neon_slowtbl_consts:
-    .byte 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, \
-          0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80
 
 .text
 
@@ -256,13 +159,14 @@ _\fname:
 #endif
 .endm
 
-.macro get_symbol_loc xi, symbol
+/* Get symbol location */
+.macro get_symbol_loc reg, symbol
 #ifdef __APPLE__
-    adrp            \xi, \symbol@PAGE
-    add             \xi, \xi, \symbol@PAGEOFF
+    adrp            \reg, \symbol@PAGE
+    add             \reg, \reg, \symbol@PAGEOFF
 #else
-    adrp            \xi, \symbol
-    add             \xi, \xi, :lo12:\symbol
+    adrp            \reg, \symbol
+    add             \reg, \reg, :lo12:\symbol
 #endif
 .endm
 
@@ -482,7 +386,6 @@ _\fname:
     do_rgb_to_yuv_stage1
 .endm
 
-
 .if \fast_ld3 == 1
 asm_function jsimd_\colorid\()_ycc_convert_neon
 .else
@@ -505,8 +408,7 @@ asm_function jsimd_\colorid\()_ycc_convert_neon_slowld3
     N               .req w12
 
     /* Load constants to d0, d1, d2, d3 */
-    get_symbol_loc x13, Ljsimd_colorid_ycc_neon_consts
-
+    get_symbol_loc  x13, Ljsimd_rgb_ycc_neon_consts
     ld1             {v0.8h, v1.8h}, [x13]
 
     ldr             OUTPUT_BUF0, [OUTPUT_BUF]
@@ -1228,8 +1130,6 @@ asm_function jsimd_quantize_neon
 
 .macro generate_jsimd_huff_encode_one_block fast_tbl
 
-.balign 16
-
 .if \fast_tbl == 1
 asm_function jsimd_huff_encode_one_block_neon
 .else
@@ -1239,11 +1139,7 @@ asm_function jsimd_huff_encode_one_block_neon_slowtbl
     sub             BUFFER, BUFFER, #0x1    /* BUFFER=buffer-- */
     /* Save ARM registers */
     stp             x19, x20, [sp]
-.if \fast_tbl == 1
     get_symbol_loc  x15, Ljsimd_huff_encode_one_block_neon_consts
-.else
-    get_symbol_loc  x15, Ljsimd_huff_encode_one_block_neon_slowtbl_consts
-.endif
     ldr             PUT_BUFFER, [x0, #0x10]
     ldr             PUT_BITSw, [x0, #0x18]
     ldrsh           w12, [x2]               /* load DC coeff in w12 */
