@@ -21,6 +21,7 @@
  */
 
 #define JPEG_INTERNALS
+#include "../../../jconfigint.h"
 #include "../../../jinclude.h"
 #include "../../../jpeglib.h"
 #include "../../../jsimd.h"
@@ -41,11 +42,12 @@
 #define F_0_418  27439
 #define F_0_081  5329
 
-const static uint16_t jsimd_rgb_ycc_neon_consts[] = { F_0_298, F_0_587,
-                                                      F_0_113, F_0_168,
-                                                      F_0_331, F_0_500,
-                                                      F_0_418, F_0_081
-                                                    };
+ALIGN(16) static const uint16_t jsimd_rgb_ycc_neon_consts[] = {
+                                            F_0_298, F_0_587,
+                                            F_0_113, F_0_168,
+                                            F_0_331, F_0_500,
+                                            F_0_418, F_0_081
+                                          };
 
 /* Include inline routines for colorspace extensions. */
 

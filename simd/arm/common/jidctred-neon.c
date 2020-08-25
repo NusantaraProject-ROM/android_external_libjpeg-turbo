@@ -21,6 +21,7 @@
  */
 
 #define JPEG_INTERNALS
+#include "../../../jconfigint.h"
 #include "../../../jinclude.h"
 #include "../../../jpeglib.h"
 #include "../../../jsimd.h"
@@ -183,7 +184,7 @@ void jsimd_idct_2x2_neon(void *dct_table,
  *       exact compatibility with jpeg-6b.
  */
 
-__attribute__ ((aligned(8))) static int16_t jsimd_idct_4x4_neon_consts[] = {
+ALIGN(16) static const int16_t jsimd_idct_4x4_neon_consts[] = {
                                         F_1_847, -F_0_765, -F_0_211,  F_1_451,
                                        -F_2_172,  F_1_061, -F_0_509, -F_0_601,
                                         F_0_899,  F_2_562,        0,        0

@@ -58,7 +58,7 @@ void jsimd_rgb_gray_convert_neon(JDIMENSION image_width,
       /* last (image_width % 16) columns of data are first memcopied to a */
       /* temporary buffer large enough to accommodate the vector load. */
       if (cols_remaining < 16) {
-        uint8_t __attribute__((aligned(8))) tmp_buf[16 * RGB_PIXELSIZE];
+        ALIGN(16) uint8_t tmp_buf[16 * RGB_PIXELSIZE];
         memcpy(tmp_buf, inptr, cols_remaining * RGB_PIXELSIZE);
         inptr = tmp_buf;
       }

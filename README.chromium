@@ -75,6 +75,7 @@ following changes which are not merged to upstream:
   - Add Arm NEON implementation of h2v2_downsample
   - Implement RGB->YCbCr using Arm NEON intrinsics
   - Add Arm NEON implementation of RGB->Grayscale
+  - Add compiler-independent alignment macro
 * Patches to enable running the upstream unit tests through gtest.
   The upstream unit tests are defined here under the section 'TESTS':
   https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/CMakeLists.txt
