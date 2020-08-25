@@ -62,4 +62,13 @@
 #endif
 #endif
 
+/* How to obtain memory alignment for structures and variables. */
+#if defined(_MSC_VER)
+#define ALIGN(ALIGNMENT) __declspec(align((ALIGNMENT)))
+#elif defined(__clang__) || defined(__GNUC__)
+#define ALIGN(ALIGNMENT) __attribute__((aligned(ALIGNMENT)))
+#else
+#error "Unknown compiler"
+#endif
+
 #endif  // __JCONFIGINT_H__

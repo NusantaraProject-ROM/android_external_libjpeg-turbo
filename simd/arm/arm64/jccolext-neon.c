@@ -161,7 +161,7 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       /* To prevent buffer overread by the vector load instructions, the */
       /* last (image_width % 16) columns of data are first memcopied to a */
       /* temporary buffer large enough to accommodate the vector load. */
-      uint8_t __attribute__((aligned(16))) tmp_buf[16 * RGB_PIXELSIZE];
+      ALIGN(16) uint8_t tmp_buf[16 * RGB_PIXELSIZE];
       memcpy(tmp_buf, inptr, cols_remaining * RGB_PIXELSIZE);
       inptr = tmp_buf;
 
@@ -252,7 +252,7 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       /* To prevent buffer overread by the vector load instructions, the */
       /* last (image_width % 8) columns of data are first memcopied to a */
       /* temporary buffer large enough to accommodate the vector load. */
-      uint8_t __attribute__((aligned(8))) tmp_buf[8 * RGB_PIXELSIZE];
+      ALIGN(16) uint8_t tmp_buf[8 * RGB_PIXELSIZE];
       memcpy(tmp_buf, inptr, cols_remaining * RGB_PIXELSIZE);
       inptr = tmp_buf;
 

@@ -21,6 +21,7 @@
  */
 
 #define JPEG_INTERNALS
+#include "../../../jconfigint.h"
 #include "../../../jinclude.h"
 #include "../../../jpeglib.h"
 #include "../../../jsimd.h"
@@ -75,7 +76,7 @@
 #define F_2_053_MINUS_2_562  (F_2_053 - F_2_562)
 #define F_0_541_PLUS_0_765   (F_0_541 + F_0_765)
 
-__attribute__ ((aligned(8))) static int16_t jsimd_idct_islow_neon_consts[] = {
+ALIGN(16) static const int16_t jsimd_idct_islow_neon_consts[] = {
                               F_0_899,             F_0_541,
                               F_2_562,             F_0_298_MINUS_0_899,
                               F_1_501_MINUS_0_899, F_2_053_MINUS_2_562,
