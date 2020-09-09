@@ -215,13 +215,13 @@ void jsimd_idct_islow_neon(void *dct_table,
   int16x4_t bitmap = vorr_s16(row7, row6);
   bitmap = vorr_s16(bitmap, row5);
   bitmap = vorr_s16(bitmap, row4);
-  int64_t bitmap_rows_4567 = vreinterpret_s64_s16(bitmap);
+  int64_t bitmap_rows_4567 = vget_lane_s64(vreinterpret_s64_s16(bitmap), 0);
 
   if (bitmap_rows_4567 == 0) {
     bitmap = vorr_s16(bitmap, row3);
     bitmap = vorr_s16(bitmap, row2);
     bitmap = vorr_s16(bitmap, row1);
-    int64_t left_ac_bitmap = vreinterpret_s64_s16(bitmap);
+    int64_t left_ac_bitmap = vget_lane_s64(vreinterpret_s64_s16(bitmap), 0);
 
     if (left_ac_bitmap == 0) {
       int16x4_t dcval = vshl_n_s16(vmul_s16(row0, quant_row0), PASS1_BITS);
@@ -267,18 +267,18 @@ void jsimd_idct_islow_neon(void *dct_table,
   bitmap = vorr_s16(row7, row6);
   bitmap = vorr_s16(bitmap, row5);
   bitmap = vorr_s16(bitmap, row4);
-  bitmap_rows_4567 = vreinterpret_s64_s16(bitmap);
+  bitmap_rows_4567 = vget_lane_s64(vreinterpret_s64_s16(bitmap), 0);
   bitmap = vorr_s16(bitmap, row3);
   bitmap = vorr_s16(bitmap, row2);
   bitmap = vorr_s16(bitmap, row1);
-  int64_t right_ac_bitmap = vreinterpret_s64_s16(bitmap);
+  int64_t right_ac_bitmap = vget_lane_s64(vreinterpret_s64_s16(bitmap), 0);
 
   /* Initialise to non-zero value: defaults to regular second pass. */
   int64_t right_ac_dc_bitmap = 1;
 
   if (right_ac_bitmap == 0) {
     bitmap = vorr_s16(bitmap, row0);
-    right_ac_dc_bitmap = vreinterpret_s64_s16(bitmap);
+    right_ac_dc_bitmap = vget_lane_s64(vreinterpret_s64_s16(bitmap), 0);
 
     if (right_ac_dc_bitmap != 0) {
       int16x4_t dcval = vshl_n_s16(vmul_s16(row0, quant_row0), PASS1_BITS);
@@ -631,10 +631,14 @@ static inline void jsimd_idct_islow_pass2_regular(int16_t *workspace,
   int8x8_t cols_46_s8 = vqrshrn_n_s16(cols_46_s16, DESCALE_P2 - 16);
   int8x8_t cols_57_s8 = vqrshrn_n_s16(cols_57_s16, DESCALE_P2 - 16);
   /* Clamp to range [0-255]. */
-  uint8x8_t cols_02_u8 = vadd_u8(cols_02_s8, vdup_n_u8(CENTERJSAMPLE));
-  uint8x8_t cols_13_u8 = vadd_u8(cols_13_s8, vdup_n_u8(CENTERJSAMPLE));
-  uint8x8_t cols_46_u8 = vadd_u8(cols_46_s8, vdup_n_u8(CENTERJSAMPLE));
-  uint8x8_t cols_57_u8 = vadd_u8(cols_57_s8, vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_02_u8 = vadd_u8(vreinterpret_u8_s8(cols_02_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_13_u8 = vadd_u8(vreinterpret_u8_s8(cols_13_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_46_u8 = vadd_u8(vreinterpret_u8_s8(cols_46_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_57_u8 = vadd_u8(vreinterpret_u8_s8(cols_57_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
 
   /* Transpose 4x8 block and store to memory. */
   /* Zipping adjacent columns together allows us to store 16-bit elements. */
@@ -723,10 +727,14 @@ static inline void jsimd_idct_islow_pass2_sparse(int16_t *workspace,
   int8x8_t cols_46_s8 = vqrshrn_n_s16(cols_46_s16, DESCALE_P2 - 16);
   int8x8_t cols_57_s8 = vqrshrn_n_s16(cols_57_s16, DESCALE_P2 - 16);
   /* Clamp to range [0-255]. */
-  uint8x8_t cols_02_u8 = vadd_u8(cols_02_s8, vdup_n_u8(CENTERJSAMPLE));
-  uint8x8_t cols_13_u8 = vadd_u8(cols_13_s8, vdup_n_u8(CENTERJSAMPLE));
-  uint8x8_t cols_46_u8 = vadd_u8(cols_46_s8, vdup_n_u8(CENTERJSAMPLE));
-  uint8x8_t cols_57_u8 = vadd_u8(cols_57_s8, vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_02_u8 = vadd_u8(vreinterpret_u8_s8(cols_02_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_13_u8 = vadd_u8(vreinterpret_u8_s8(cols_13_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_46_u8 = vadd_u8(vreinterpret_u8_s8(cols_46_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
+  uint8x8_t cols_57_u8 = vadd_u8(vreinterpret_u8_s8(cols_57_s8),
+                                 vdup_n_u8(CENTERJSAMPLE));
 
   /* Transpose 4x8 block and store to memory. */
   /* Zipping adjacent columns together allow us to store 16-bit elements. */
