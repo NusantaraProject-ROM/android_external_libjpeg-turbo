@@ -226,6 +226,7 @@ _\fname:
 #define XFIX_N_2_562  v1.h[2]
 #define XFIX_P_3_072  v1.h[3]
 
+.balign 16
 asm_function jsimd_fdct_islow_neon
 
     DATA            .req x0
@@ -511,6 +512,7 @@ asm_function jsimd_fdct_islow_neon
 #define XFIX_0_707106781  v0.h[2]
 #define XFIX_1_306562965  v0.h[3]
 
+.balign 16
 asm_function jsimd_fdct_ifast_neon
 
     DATA            .req x0
@@ -647,6 +649,7 @@ asm_function jsimd_fdct_ifast_neon
 
 .macro generate_jsimd_huff_encode_one_block fast_tbl
 
+.balign 16
 .if \fast_tbl == 1
 asm_function jsimd_huff_encode_one_block_neon
 .else
