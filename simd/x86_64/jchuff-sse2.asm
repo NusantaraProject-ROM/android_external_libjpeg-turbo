@@ -17,8 +17,6 @@
 ; This file contains an SSE2 implementation for Huffman coding of one block.
 ; The following code is based directly on jchuff.c; see jchuff.c for more
 ; details.
-;
-; [TAB8]
 
 %include "jsimdext.inc"
 
@@ -27,10 +25,9 @@
 
     alignz      32
     GLOBAL_DATA(jconst_huff_encode_one_block)
+    EXTERN      EXTN(jpeg_nbits_table)
 
 EXTN(jconst_huff_encode_one_block):
-
-%include "jpeg_nbits_table.inc"
 
     alignz      32
 
@@ -200,7 +197,7 @@ EXTN(jsimd_huff_encode_one_block_sse2):
     mov         buffer, r11                  ; r11 is now sratch
 
     mov         put_buffer, MMWORD [r10+16]  ; put_buffer = state->cur.put_buffer;
-    mov         put_bits,    DWORD [r10+24]  ; put_bits = state->cur.put_bits;
+    mov         put_bits,    dword [r10+24]  ; put_bits = state->cur.put_bits;
     push        r10                          ; r10 is now scratch
 
     ; Encode the DC coefficient difference per section F.1.2.1
@@ -222,7 +219,7 @@ EXTN(jsimd_huff_encode_one_block_sse2):
     add         ebx, esi                ; temp2 += temp3;
 
     ; Find the number of bits needed for the magnitude of the coefficient
-    lea         r11, [rel jpeg_nbits_table]
+    lea         r11, [rel EXTN(jpeg_nbits_table)]
     movzx       rdi, byte [r11 + rdi]         ; nbits = JPEG_NBITS(temp);
     ; Emit the Huffman-coded symbol for the number of bits
     mov         r11d,  INT [r14 + rdi * 4]    ; code = dctbl->ehufco[nbits];
@@ -289,7 +286,7 @@ EXTN(jsimd_huff_encode_one_block_sse2):
     lea         rsi, [rsi+r12*2]             ; k += r;
     shr         r11, cl                      ; index >>= r;
     movzx       rdi, word [rsi]              ; temp = t1[k];
-    lea         rbx, [rel jpeg_nbits_table]
+    lea         rbx, [rel EXTN(jpeg_nbits_table)]
     movzx       rdi, byte [rbx + rdi]        ; nbits = JPEG_NBITS(temp);
 .BRLOOP:
     cmp         r12, 16                 ; while (r > 15) {
@@ -333,7 +330,7 @@ EXTN(jsimd_huff_encode_one_block_sse2):
     pop         r10
     ; Save put_buffer & put_bits
     mov         MMWORD [r10+16], put_buffer  ; state->cur.put_buffer = put_buffer;
-    mov         DWORD  [r10+24], put_bits    ; state->cur.put_bits = put_bits;
+    mov         dword  [r10+24], put_bits    ; state->cur.put_bits = put_bits;
 
     pop         rbx
     uncollect_args 6
