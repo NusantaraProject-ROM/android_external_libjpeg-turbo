@@ -1,10 +1,12 @@
 /*
- * jsimd_arm64.c
+ * jsimd_arm.c
  *
  * Copyright 2009 Pierre Ossman <ossman@cendio.se> for Cendio AB
  * Copyright (C) 2011, Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2009-2011, 2013-2014, 2016, 2018, D. R. Commander.
  * Copyright (C) 2015-2016, 2018, Matthieu Darbois.
+ * Copyright (C) 2019, Google LLC.
+ * Copyright (C) 2020, Arm Limited.
  *
  * Based on the x86 SIMD extension for IJG JPEG library,
  * Copyright (C) 1999-2006, MIYASAKA Masaru.
@@ -12,7 +14,7 @@
  *
  * This file contains the interface between the "normal" portions
  * of the library and the SIMD implementations when running on a
- * 64-bit ARM architecture.
+ * 32-bit Arm architecture.
  */
 
 #define JPEG_INTERNALS
@@ -27,36 +29,33 @@
 #include <string.h>
 #include <ctype.h>
 
-#define JSIMD_FASTTBL  4
-
 static unsigned int simd_support = ~0;
 static unsigned int simd_huffman = 1;
-static unsigned int simd_features = JSIMD_FASTTBL;
 
-#if defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+#if !defined(__ARM_NEON__) && (defined(__linux__) || defined(ANDROID) || defined(__ANDROID__))
 
 #define SOMEWHAT_SANE_PROC_CPUINFO_SIZE_LIMIT  (1024 * 1024)
 
 LOCAL(int)
-check_cpuinfo(char *buffer, const char *field, char *value)
+check_feature(char *buffer, char *feature)
 {
   char *p;
 
-  if (*value == 0)
+  if (*feature == 0)
     return 0;
-  if (strncmp(buffer, field, strlen(field)) != 0)
+  if (strncmp(buffer, "Features", 8) != 0)
     return 0;
-  buffer += strlen(field);
+  buffer += 8;
   while (isspace(*buffer))
     buffer++;
 
-  /* Check if 'value' is present in the buffer as a separate word */
-  while ((p = strstr(buffer, value))) {
+  /* Check if 'feature' is present in the buffer as a separate word */
+  while ((p = strstr(buffer, feature))) {
     if (p > buffer && !isspace(*(p - 1))) {
       buffer++;
       continue;
     }
-    p += strlen(value);
+    p += strlen(feature);
     if (*p != 0 && !isspace(*p)) {
       buffer++;
       continue;
@@ -72,6 +71,8 @@ parse_proc_cpuinfo(int bufsize)
   char *buffer = (char *)malloc(bufsize);
   FILE *fd;
 
+  simd_support = 0;
+
   if (!buffer)
     return 0;
 
@@ -84,17 +85,8 @@ parse_proc_cpuinfo(int bufsize)
         free(buffer);
         return 0;
       }
-      if (check_cpuinfo(buffer, "CPU part", "0xd03") ||
-          check_cpuinfo(buffer, "CPU part", "0xd07"))
-        /* The Cortex-A53 has a slow tbl implementation.  We can gain a few
-           percent speedup by disabling the use of that instruction.  The
-           speedup on Cortex-A57 is more subtle but still measurable. */
-        simd_features &= ~JSIMD_FASTTBL;
-      else if (check_cpuinfo(buffer, "CPU part", "0x0a1"))
-        /* The SIMD version of Huffman encoding is slower than the C version on
-           Cavium ThunderX.  Also, ld3 and st3 are abyssmally slow on that
-           CPU. */
-        simd_huffman = simd_features = 0;
+      if (check_feature(buffer, "neon"))
+        simd_support |= JSIMD_NEON;
     }
     fclose(fd);
   }
@@ -109,20 +101,13 @@ parse_proc_cpuinfo(int bufsize)
  *
  * FIXME: This code is racy under a multi-threaded environment.
  */
-
-/*
- * ARMv8 architectures support NEON extensions by default.
- * It is no longer optional as it was with ARMv7.
- */
-
-
 LOCAL(void)
 init_simd(void)
 {
 #ifndef NO_GETENV
   char *env = NULL;
 #endif
-#if defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+#if !defined(__ARM_NEON__) && (defined(__linux__) || defined(ANDROID) || defined(__ANDROID__))
   int bufsize = 1024; /* an initial guess for the line buffer size limit */
 #endif
 
@@ -131,8 +116,12 @@ init_simd(void)
 
   simd_support = 0;
 
+#if defined(__ARM_NEON__)
   simd_support |= JSIMD_NEON;
-#if defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+#elif defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+  /* We still have a chance to use Neon regardless of globally used
+   * -mcpu/-mfpu options passed to gcc by performing runtime detection via
+   * /proc/cpuinfo parsing on linux/android */
   while (!parse_proc_cpuinfo(bufsize)) {
     bufsize *= 2;
     if (bufsize > SOMEWHAT_SANE_PROC_CPUINFO_SIZE_LIMIT)
@@ -336,6 +325,7 @@ jsimd_ycc_rgb_convert(j_decompress_ptr cinfo, JSAMPIMAGE input_buf,
     break;
   default:
     neonfct = jsimd_ycc_extrgb_convert_neon;
+    break;
   }
 
   neonfct(cinfo->output_width, input_buf, input_row, output_buf, num_rows);
@@ -433,7 +423,6 @@ jsimd_can_h2v1_upsample(void)
     return 0;
   if (sizeof(JDIMENSION) != 4)
     return 0;
-
   if (simd_support & JSIMD_NEON)
     return 1;
 
@@ -938,17 +927,23 @@ jsimd_huff_encode_one_block(void *state, JOCTET *buffer, JCOEFPTR block,
                             int last_dc_val, c_derived_tbl *dctbl,
                             c_derived_tbl *actbl)
 {
-  if (simd_features & JSIMD_FASTTBL)
-    return jsimd_huff_encode_one_block_neon(state, buffer, block, last_dc_val,
-                                            dctbl, actbl);
-  else
-    return jsimd_huff_encode_one_block_neon_slowtbl(state, buffer, block,
-                                                    last_dc_val, dctbl, actbl);
+  return jsimd_huff_encode_one_block_neon(state, buffer, block, last_dc_val,
+                                          dctbl, actbl);
 }
 
 GLOBAL(int)
 jsimd_can_encode_mcu_AC_first_prepare(void)
 {
+  init_simd();
+
+  if (DCTSIZE != 8)
+    return 0;
+  if (sizeof(JCOEF) != 2)
+    return 0;
+
+  if (simd_support & JSIMD_NEON)
+    return 1;
+
   return 0;
 }
 
@@ -957,11 +952,23 @@ jsimd_encode_mcu_AC_first_prepare(const JCOEF *block,
                                   const int *jpeg_natural_order_start, int Sl,
                                   int Al, JCOEF *values, size_t *zerobits)
 {
+  jsimd_encode_mcu_AC_first_prepare_neon(block, jpeg_natural_order_start,
+                                         Sl, Al, values, zerobits);
 }
 
 GLOBAL(int)
 jsimd_can_encode_mcu_AC_refine_prepare(void)
 {
+  init_simd();
+
+  if (DCTSIZE != 8)
+    return 0;
+  if (sizeof(JCOEF) != 2)
+    return 0;
+
+  if (simd_support & JSIMD_NEON)
+    return 1;
+
   return 0;
 }
 
@@ -970,5 +977,7 @@ jsimd_encode_mcu_AC_refine_prepare(const JCOEF *block,
                                    const int *jpeg_natural_order_start, int Sl,
                                    int Al, JCOEF *absvalues, size_t *bits)
 {
-  return 0;
+  return jsimd_encode_mcu_AC_refine_prepare_neon(block,
+                                                 jpeg_natural_order_start, Sl,
+                                                 Al, absvalues, bits);
 }
