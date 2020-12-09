@@ -1,7 +1,8 @@
 /*
- * jccolext-neon.c - colorspace conversion (Arm NEON)
+ * jccolext-neon.c - colorspace conversion (32-bit Arm Neon)
  *
- * Copyright 2020 The Chromium Authors. All Rights Reserved.
+ * Copyright (C) 2020, Arm Limited.  All Rights Reserved.
+ * Copyright (C) 2020, D. R. Commander.  All Rights Reserved.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -22,8 +23,8 @@
 
 /* This file is included by jccolor-neon.c */
 
-/*
- * RGB -> YCbCr conversion is defined by the following equations:
+
+/* RGB -> YCbCr conversion is defined by the following equations:
  *    Y  =  0.29900 * R + 0.58700 * G + 0.11400 * B
  *    Cb = -0.16874 * R - 0.33126 * G + 0.50000 * B  + 128
  *    Cr =  0.50000 * R - 0.41869 * G - 0.08131 * B  + 128
@@ -39,28 +40,29 @@
  *    0.08131409 =  5329 * 2^-16
  * These constants are defined in jccolor-neon.c
  *
- * To ensure rounding gives correct values, we add 0.5 to Cb and Cr.
+ * We add the fixed-point equivalent of 0.5 to Cb and Cr, which effectively
+ * rounds up or down the result via integer truncation.
  */
 
-void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
-                                JSAMPARRAY input_buf,
-                                JSAMPIMAGE output_buf,
-                                JDIMENSION output_row,
+void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width, JSAMPARRAY input_buf,
+                                JSAMPIMAGE output_buf, JDIMENSION output_row,
                                 int num_rows)
 {
-  /* Pointer to RGB(X/A) input data. */
+  /* Pointer to RGB(X/A) input data */
   JSAMPROW inptr;
-  /* Pointers to Y, Cb and Cr output data. */
+  /* Pointers to Y, Cb, and Cr output data */
   JSAMPROW outptr0, outptr1, outptr2;
+  /* Allocate temporary buffer for final (image_width % 8) pixels in row. */
+  ALIGN(16) uint8_t tmp_buf[8 * RGB_PIXELSIZE];
 
-  /* Setup conversion constants. */
-#if defined(__clang__)
+  /* Set up conversion constants. */
+#ifdef HAVE_VLD1_U16_X2
   const uint16x4x2_t consts = vld1_u16_x2(jsimd_rgb_ycc_neon_consts);
 #else
   /* GCC does not currently support the intrinsic vld1_<type>_x2(). */
   const uint16x4_t consts1 = vld1_u16(jsimd_rgb_ycc_neon_consts);
   const uint16x4_t consts2 = vld1_u16(jsimd_rgb_ycc_neon_consts + 4);
-  const uint16x4x2_t consts = { consts1, consts2 };
+  const uint16x4x2_t consts = { { consts1, consts2 } };
 #endif
   const uint32x4_t scaled_128_5 = vdupq_n_u32((128 << 16) + 32767);
 
@@ -74,11 +76,11 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
     int cols_remaining = image_width;
     for (; cols_remaining > 0; cols_remaining -= 8) {
 
-      /* To prevent buffer overread by the vector load instructions, the */
-      /* last (image_width % 8) columns of data are first memcopied to a */
-      /* temporary buffer large enough to accommodate the vector load. */
+      /* To prevent buffer overread by the vector load instructions, the last
+       * (image_width % 8) columns of data are first memcopied to a temporary
+       * buffer large enough to accommodate the vector load.
+       */
       if (cols_remaining < 8) {
-        ALIGN(16) uint8_t tmp_buf[8 * RGB_PIXELSIZE];
         memcpy(tmp_buf, inptr, cols_remaining * RGB_PIXELSIZE);
         inptr = tmp_buf;
       }
@@ -129,8 +131,9 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       /* Descale Cr values (right shift) and narrow to 16-bit. */
       uint16x8_t cr_u16 = vcombine_u16(vshrn_n_u32(cr_low, 16),
                                        vshrn_n_u32(cr_high, 16));
-      /* Narrow Y, Cb and Cr values to 8-bit and store to memory. Buffer */
-      /* overwrite is permitted up to the next multiple of ALIGN_SIZE bytes. */
+      /* Narrow Y, Cb, and Cr values to 8-bit and store to memory.  Buffer
+       * overwrite is permitted up to the next multiple of ALIGN_SIZE bytes.
+       */
       vst1_u8(outptr0, vmovn_u16(y_u16));
       vst1_u8(outptr1, vmovn_u16(cb_u16));
       vst1_u8(outptr2, vmovn_u16(cr_u16));
