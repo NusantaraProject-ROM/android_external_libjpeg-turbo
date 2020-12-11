@@ -14,10 +14,11 @@ This consists of the components:
 * An OWNERS file
 * A codereview.settings file
 * Patched header files used by Chromium
-* Cherry-picked two additional patches from upstream master to fix bugs found
+* Cherry-picked three additional patches from upstream master to fix bugs found
   by fuzzers:
   https://github.com/libjpeg-turbo/libjpeg-turbo/commit/ccaba5d7894ecfb5a8f11e48d3f86e1f14d5a469
   https://github.com/libjpeg-turbo/libjpeg-turbo/commit/c7ca521bc85b57d41d3ad4963c13fc0100481084
+  https://github.com/libjpeg-turbo/libjpeg-turbo/commit/110d8d6dcafaed517e8f77a6253169535ee3a20e
 * Deleted unused directories: ci, cmakescripts, doc, java, release, sharedlib,
   simd/loongson, simd/mips, simd/powerpc, and win
 * Deleted unused files: appveyor.yml, CMakeLists.txt, doxygen.config,
