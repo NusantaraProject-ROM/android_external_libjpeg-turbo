@@ -316,6 +316,9 @@ LOCAL(void)
 read_and_discard_scanlines(j_decompress_ptr cinfo, JDIMENSION num_lines)
 {
   JDIMENSION n;
+  JSAMPLE dummy_sample[1] = { 0 };
+  JSAMPROW dummy_row = dummy_sample;
+  JSAMPARRAY scanlines = NULL;
   void (*color_convert) (j_decompress_ptr cinfo, JSAMPIMAGE input_buf,
                          JDIMENSION input_row, JSAMPARRAY output_buf,
                          int num_rows) = NULL;
@@ -325,6 +328,10 @@ read_and_discard_scanlines(j_decompress_ptr cinfo, JDIMENSION num_lines)
   if (cinfo->cconvert && cinfo->cconvert->color_convert) {
     color_convert = cinfo->cconvert->color_convert;
     cinfo->cconvert->color_convert = noop_convert;
+    /* This just prevents UBSan from complaining about adding 0 to a NULL
+     * pointer.  The pointer isn't actually used.
+     */
+    scanlines = &dummy_row;
   }
 
   if (cinfo->cquantize && cinfo->cquantize->color_quantize) {
@@ -333,7 +340,7 @@ read_and_discard_scanlines(j_decompress_ptr cinfo, JDIMENSION num_lines)
   }
 
   for (n = 0; n < num_lines; n++)
-    jpeg_read_scanlines(cinfo, NULL, 1);
+    jpeg_read_scanlines(cinfo, scanlines, 1);
 
   if (color_convert)
     cinfo->cconvert->color_convert = color_convert;
