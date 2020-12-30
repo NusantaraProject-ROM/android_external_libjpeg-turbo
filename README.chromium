@@ -73,6 +73,8 @@ following changes which are not merged to upstream:
   - Refactor djpeg.c to provide test interface
   A new gtest directory contains GTest wrappers (and associated utilities) for
   each of tjunittest, tjbench, cjpeg, djpeg and jpegtran.
+* Disable Neon SIMD path for Huffman encoding when compiling for Windows on Arm
+  using Clang-cl: http://crbug.com/1160249
 
 Refer to working-with-nested-repos [1] for details of how to setup your git
 svn client to update the code (for making local changes, cherry picking from
