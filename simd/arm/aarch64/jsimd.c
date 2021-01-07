@@ -977,6 +977,8 @@ jsimd_idct_float(j_decompress_ptr cinfo, jpeg_component_info *compptr,
 GLOBAL(int)
 jsimd_can_huff_encode_one_block(void)
 {
+/* Disable for Windows on Arm compiled with Clang-cl: crbug.com/1160249 */
+#if !(defined(_MSC_VER) && defined(__clang__))
   init_simd();
 
   if (DCTSIZE != 8)
@@ -986,6 +988,7 @@ jsimd_can_huff_encode_one_block(void)
 
   if (simd_support & JSIMD_NEON && simd_huffman)
     return 1;
+#endif
 
   return 0;
 }
