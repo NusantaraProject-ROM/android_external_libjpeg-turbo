@@ -267,9 +267,9 @@ static_library("libjpeg") {
     ":libjpeg_headers",
   ]
 
-  # MemorySanitizer doesn't support assembly code, so keep it disabled in
-  # MSan builds for now.
-  if (is_msan) {
+  # MemorySanitizer doesn't support assembly code, so keep it disabled in x86
+  # and x64 MSan builds for now.
+  if (is_msan && (current_cpu == "x86" || current_cpu == "x64")) {
     sources += [ "jsimd_none.c" ]
   } else {
     public_deps += [ ":simd" ]
