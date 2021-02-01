@@ -3,13 +3,13 @@ description: "libjpeg-turbo is a JPEG image codec."
 third_party {
   url {
     type: GIT
-    value: "https://github.com/libjpeg-turbo/libjpeg-turbo.git"
+    value: "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo"
   }
-  version: "2.0.3"
+  version: "d5148db386ceb4a608058320071cbed890bd6ad2"
   license_type: NOTICE
   last_upgrade_date {
-    year: 2019
+    year: 2020
     month: 9
-    day: 4
+    day: 9
   }
 }
