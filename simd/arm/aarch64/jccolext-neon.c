@@ -1,7 +1,7 @@
 /*
- * jccolext-neon.c - colorspace conversion (Arm NEON)
+ * jccolext-neon.c - colorspace conversion (64-bit Arm Neon)
  *
- * Copyright 2020 The Chromium Authors. All Rights Reserved.
+ * Copyright (C) 2020, Arm Limited.  All Rights Reserved.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -22,8 +22,8 @@
 
 /* This file is included by jccolor-neon.c */
 
-/*
- * RGB -> YCbCr conversion is defined by the following equations:
+
+/* RGB -> YCbCr conversion is defined by the following equations:
  *    Y  =  0.29900 * R + 0.58700 * G + 0.11400 * B
  *    Cb = -0.16874 * R - 0.33126 * G + 0.50000 * B  + 128
  *    Cr =  0.50000 * R - 0.41869 * G - 0.08131 * B  + 128
@@ -39,21 +39,22 @@
  *    0.08131409 =  5329 * 2^-16
  * These constants are defined in jccolor-neon.c
  *
- * To ensure rounding gives correct values, we add 0.5 to Cb and Cr.
+ * We add the fixed-point equivalent of 0.5 to Cb and Cr, which effectively
+ * rounds up or down the result via integer truncation.
  */
 
-void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
-                                JSAMPARRAY input_buf,
-                                JSAMPIMAGE output_buf,
-                                JDIMENSION output_row,
+void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width, JSAMPARRAY input_buf,
+                                JSAMPIMAGE output_buf, JDIMENSION output_row,
                                 int num_rows)
 {
-  /* Pointer to RGB(X/A) input data. */
+  /* Pointer to RGB(X/A) input data */
   JSAMPROW inptr;
-  /* Pointers to Y, Cb and Cr output data. */
+  /* Pointers to Y, Cb, and Cr output data */
   JSAMPROW outptr0, outptr1, outptr2;
+  /* Allocate temporary buffer for final (image_width % 16) pixels in row. */
+  ALIGN(16) uint8_t tmp_buf[16 * RGB_PIXELSIZE];
 
-  /* Setup conversion constants. */
+  /* Set up conversion constants. */
   const uint16x8_t consts = vld1q_u16(jsimd_rgb_ycc_neon_consts);
   const uint32x4_t scaled_128_5 = vdupq_n_u32((128 << 16) + 32767);
 
@@ -83,15 +84,15 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       uint32x4_t y_ll = vmull_laneq_u16(vget_low_u16(r_l), consts, 0);
       y_ll = vmlal_laneq_u16(y_ll, vget_low_u16(g_l), consts, 1);
       y_ll = vmlal_laneq_u16(y_ll, vget_low_u16(b_l), consts, 2);
-      uint32x4_t y_lh = vmull_high_laneq_u16(r_l, consts, 0);
-      y_lh = vmlal_high_laneq_u16(y_lh, g_l, consts, 1);
-      y_lh = vmlal_high_laneq_u16(y_lh, b_l, consts, 2);
+      uint32x4_t y_lh = vmull_laneq_u16(vget_high_u16(r_l), consts, 0);
+      y_lh = vmlal_laneq_u16(y_lh, vget_high_u16(g_l), consts, 1);
+      y_lh = vmlal_laneq_u16(y_lh, vget_high_u16(b_l), consts, 2);
       uint32x4_t y_hl = vmull_laneq_u16(vget_low_u16(r_h), consts, 0);
       y_hl = vmlal_laneq_u16(y_hl, vget_low_u16(g_h), consts, 1);
       y_hl = vmlal_laneq_u16(y_hl, vget_low_u16(b_h), consts, 2);
-      uint32x4_t y_hh = vmull_high_laneq_u16(r_h, consts, 0);
-      y_hh = vmlal_high_laneq_u16(y_hh, g_h, consts, 1);
-      y_hh = vmlal_high_laneq_u16(y_hh, b_h, consts, 2);
+      uint32x4_t y_hh = vmull_laneq_u16(vget_high_u16(r_h), consts, 0);
+      y_hh = vmlal_laneq_u16(y_hh, vget_high_u16(g_h), consts, 1);
+      y_hh = vmlal_laneq_u16(y_hh, vget_high_u16(b_h), consts, 2);
 
       /* Compute Cb = -0.16874 * R - 0.33126 * G + 0.50000 * B  + 128 */
       uint32x4_t cb_ll = scaled_128_5;
@@ -99,17 +100,17 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       cb_ll = vmlsl_laneq_u16(cb_ll, vget_low_u16(g_l), consts, 4);
       cb_ll = vmlal_laneq_u16(cb_ll, vget_low_u16(b_l), consts, 5);
       uint32x4_t cb_lh = scaled_128_5;
-      cb_lh = vmlsl_high_laneq_u16(cb_lh, r_l, consts, 3);
-      cb_lh = vmlsl_high_laneq_u16(cb_lh, g_l, consts, 4);
-      cb_lh = vmlal_high_laneq_u16(cb_lh, b_l, consts, 5);
+      cb_lh = vmlsl_laneq_u16(cb_lh, vget_high_u16(r_l), consts, 3);
+      cb_lh = vmlsl_laneq_u16(cb_lh, vget_high_u16(g_l), consts, 4);
+      cb_lh = vmlal_laneq_u16(cb_lh, vget_high_u16(b_l), consts, 5);
       uint32x4_t cb_hl = scaled_128_5;
       cb_hl = vmlsl_laneq_u16(cb_hl, vget_low_u16(r_h), consts, 3);
       cb_hl = vmlsl_laneq_u16(cb_hl, vget_low_u16(g_h), consts, 4);
       cb_hl = vmlal_laneq_u16(cb_hl, vget_low_u16(b_h), consts, 5);
       uint32x4_t cb_hh = scaled_128_5;
-      cb_hh = vmlsl_high_laneq_u16(cb_hh, r_h, consts, 3);
-      cb_hh = vmlsl_high_laneq_u16(cb_hh, g_h, consts, 4);
-      cb_hh = vmlal_high_laneq_u16(cb_hh, b_h, consts, 5);
+      cb_hh = vmlsl_laneq_u16(cb_hh, vget_high_u16(r_h), consts, 3);
+      cb_hh = vmlsl_laneq_u16(cb_hh, vget_high_u16(g_h), consts, 4);
+      cb_hh = vmlal_laneq_u16(cb_hh, vget_high_u16(b_h), consts, 5);
 
       /* Compute Cr = 0.50000 * R - 0.41869 * G - 0.08131 * B  + 128 */
       uint32x4_t cr_ll = scaled_128_5;
@@ -117,17 +118,17 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       cr_ll = vmlsl_laneq_u16(cr_ll, vget_low_u16(g_l), consts, 6);
       cr_ll = vmlsl_laneq_u16(cr_ll, vget_low_u16(b_l), consts, 7);
       uint32x4_t cr_lh = scaled_128_5;
-      cr_lh = vmlal_high_laneq_u16(cr_lh, r_l, consts, 5);
-      cr_lh = vmlsl_high_laneq_u16(cr_lh, g_l, consts, 6);
-      cr_lh = vmlsl_high_laneq_u16(cr_lh, b_l, consts, 7);
+      cr_lh = vmlal_laneq_u16(cr_lh, vget_high_u16(r_l), consts, 5);
+      cr_lh = vmlsl_laneq_u16(cr_lh, vget_high_u16(g_l), consts, 6);
+      cr_lh = vmlsl_laneq_u16(cr_lh, vget_high_u16(b_l), consts, 7);
       uint32x4_t cr_hl = scaled_128_5;
       cr_hl = vmlal_laneq_u16(cr_hl, vget_low_u16(r_h), consts, 5);
       cr_hl = vmlsl_laneq_u16(cr_hl, vget_low_u16(g_h), consts, 6);
       cr_hl = vmlsl_laneq_u16(cr_hl, vget_low_u16(b_h), consts, 7);
       uint32x4_t cr_hh = scaled_128_5;
-      cr_hh = vmlal_high_laneq_u16(cr_hh, r_h, consts, 5);
-      cr_hh = vmlsl_high_laneq_u16(cr_hh, g_h, consts, 6);
-      cr_hh = vmlsl_high_laneq_u16(cr_hh, b_h, consts, 7);
+      cr_hh = vmlal_laneq_u16(cr_hh, vget_high_u16(r_h), consts, 5);
+      cr_hh = vmlsl_laneq_u16(cr_hh, vget_high_u16(g_h), consts, 6);
+      cr_hh = vmlsl_laneq_u16(cr_hh, vget_high_u16(b_h), consts, 7);
 
       /* Descale Y values (rounding right shift) and narrow to 16-bit. */
       uint16x8_t y_l = vcombine_u16(vrshrn_n_u32(y_ll, 16),
@@ -144,8 +145,9 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
                                      vshrn_n_u32(cr_lh, 16));
       uint16x8_t cr_h = vcombine_u16(vshrn_n_u32(cr_hl, 16),
                                      vshrn_n_u32(cr_hh, 16));
-      /* Narrow Y, Cb and Cr values to 8-bit and store to memory. Buffer */
-      /* overwrite is permitted up to the next multiple of ALIGN_SIZE bytes. */
+      /* Narrow Y, Cb, and Cr values to 8-bit and store to memory.  Buffer
+       * overwrite is permitted up to the next multiple of ALIGN_SIZE bytes.
+       */
       vst1q_u8(outptr0, vcombine_u8(vmovn_u16(y_l), vmovn_u16(y_h)));
       vst1q_u8(outptr1, vcombine_u8(vmovn_u16(cb_l), vmovn_u16(cb_h)));
       vst1q_u8(outptr2, vcombine_u8(vmovn_u16(cr_l), vmovn_u16(cr_h)));
@@ -158,10 +160,10 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
     }
 
     if (cols_remaining > 8) {
-      /* To prevent buffer overread by the vector load instructions, the */
-      /* last (image_width % 16) columns of data are first memcopied to a */
-      /* temporary buffer large enough to accommodate the vector load. */
-      ALIGN(16) uint8_t tmp_buf[16 * RGB_PIXELSIZE];
+      /* To prevent buffer overread by the vector load instructions, the last
+       * (image_width % 16) columns of data are first memcopied to a temporary
+       * buffer large enough to accommodate the vector load.
+       */
       memcpy(tmp_buf, inptr, cols_remaining * RGB_PIXELSIZE);
       inptr = tmp_buf;
 
@@ -181,15 +183,15 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       uint32x4_t y_ll = vmull_laneq_u16(vget_low_u16(r_l), consts, 0);
       y_ll = vmlal_laneq_u16(y_ll, vget_low_u16(g_l), consts, 1);
       y_ll = vmlal_laneq_u16(y_ll, vget_low_u16(b_l), consts, 2);
-      uint32x4_t y_lh = vmull_high_laneq_u16(r_l, consts, 0);
-      y_lh = vmlal_high_laneq_u16(y_lh, g_l, consts, 1);
-      y_lh = vmlal_high_laneq_u16(y_lh, b_l, consts, 2);
+      uint32x4_t y_lh = vmull_laneq_u16(vget_high_u16(r_l), consts, 0);
+      y_lh = vmlal_laneq_u16(y_lh, vget_high_u16(g_l), consts, 1);
+      y_lh = vmlal_laneq_u16(y_lh, vget_high_u16(b_l), consts, 2);
       uint32x4_t y_hl = vmull_laneq_u16(vget_low_u16(r_h), consts, 0);
       y_hl = vmlal_laneq_u16(y_hl, vget_low_u16(g_h), consts, 1);
       y_hl = vmlal_laneq_u16(y_hl, vget_low_u16(b_h), consts, 2);
-      uint32x4_t y_hh = vmull_high_laneq_u16(r_h, consts, 0);
-      y_hh = vmlal_high_laneq_u16(y_hh, g_h, consts, 1);
-      y_hh = vmlal_high_laneq_u16(y_hh, b_h, consts, 2);
+      uint32x4_t y_hh = vmull_laneq_u16(vget_high_u16(r_h), consts, 0);
+      y_hh = vmlal_laneq_u16(y_hh, vget_high_u16(g_h), consts, 1);
+      y_hh = vmlal_laneq_u16(y_hh, vget_high_u16(b_h), consts, 2);
 
       /* Compute Cb = -0.16874 * R - 0.33126 * G + 0.50000 * B  + 128 */
       uint32x4_t cb_ll = scaled_128_5;
@@ -197,17 +199,17 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       cb_ll = vmlsl_laneq_u16(cb_ll, vget_low_u16(g_l), consts, 4);
       cb_ll = vmlal_laneq_u16(cb_ll, vget_low_u16(b_l), consts, 5);
       uint32x4_t cb_lh = scaled_128_5;
-      cb_lh = vmlsl_high_laneq_u16(cb_lh, r_l, consts, 3);
-      cb_lh = vmlsl_high_laneq_u16(cb_lh, g_l, consts, 4);
-      cb_lh = vmlal_high_laneq_u16(cb_lh, b_l, consts, 5);
+      cb_lh = vmlsl_laneq_u16(cb_lh, vget_high_u16(r_l), consts, 3);
+      cb_lh = vmlsl_laneq_u16(cb_lh, vget_high_u16(g_l), consts, 4);
+      cb_lh = vmlal_laneq_u16(cb_lh, vget_high_u16(b_l), consts, 5);
       uint32x4_t cb_hl = scaled_128_5;
       cb_hl = vmlsl_laneq_u16(cb_hl, vget_low_u16(r_h), consts, 3);
       cb_hl = vmlsl_laneq_u16(cb_hl, vget_low_u16(g_h), consts, 4);
       cb_hl = vmlal_laneq_u16(cb_hl, vget_low_u16(b_h), consts, 5);
       uint32x4_t cb_hh = scaled_128_5;
-      cb_hh = vmlsl_high_laneq_u16(cb_hh, r_h, consts, 3);
-      cb_hh = vmlsl_high_laneq_u16(cb_hh, g_h, consts, 4);
-      cb_hh = vmlal_high_laneq_u16(cb_hh, b_h, consts, 5);
+      cb_hh = vmlsl_laneq_u16(cb_hh, vget_high_u16(r_h), consts, 3);
+      cb_hh = vmlsl_laneq_u16(cb_hh, vget_high_u16(g_h), consts, 4);
+      cb_hh = vmlal_laneq_u16(cb_hh, vget_high_u16(b_h), consts, 5);
 
       /* Compute Cr = 0.50000 * R - 0.41869 * G - 0.08131 * B  + 128 */
       uint32x4_t cr_ll = scaled_128_5;
@@ -215,17 +217,17 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       cr_ll = vmlsl_laneq_u16(cr_ll, vget_low_u16(g_l), consts, 6);
       cr_ll = vmlsl_laneq_u16(cr_ll, vget_low_u16(b_l), consts, 7);
       uint32x4_t cr_lh = scaled_128_5;
-      cr_lh = vmlal_high_laneq_u16(cr_lh, r_l, consts, 5);
-      cr_lh = vmlsl_high_laneq_u16(cr_lh, g_l, consts, 6);
-      cr_lh = vmlsl_high_laneq_u16(cr_lh, b_l, consts, 7);
+      cr_lh = vmlal_laneq_u16(cr_lh, vget_high_u16(r_l), consts, 5);
+      cr_lh = vmlsl_laneq_u16(cr_lh, vget_high_u16(g_l), consts, 6);
+      cr_lh = vmlsl_laneq_u16(cr_lh, vget_high_u16(b_l), consts, 7);
       uint32x4_t cr_hl = scaled_128_5;
       cr_hl = vmlal_laneq_u16(cr_hl, vget_low_u16(r_h), consts, 5);
       cr_hl = vmlsl_laneq_u16(cr_hl, vget_low_u16(g_h), consts, 6);
       cr_hl = vmlsl_laneq_u16(cr_hl, vget_low_u16(b_h), consts, 7);
       uint32x4_t cr_hh = scaled_128_5;
-      cr_hh = vmlal_high_laneq_u16(cr_hh, r_h, consts, 5);
-      cr_hh = vmlsl_high_laneq_u16(cr_hh, g_h, consts, 6);
-      cr_hh = vmlsl_high_laneq_u16(cr_hh, b_h, consts, 7);
+      cr_hh = vmlal_laneq_u16(cr_hh, vget_high_u16(r_h), consts, 5);
+      cr_hh = vmlsl_laneq_u16(cr_hh, vget_high_u16(g_h), consts, 6);
+      cr_hh = vmlsl_laneq_u16(cr_hh, vget_high_u16(b_h), consts, 7);
 
       /* Descale Y values (rounding right shift) and narrow to 16-bit. */
       uint16x8_t y_l = vcombine_u16(vrshrn_n_u32(y_ll, 16),
@@ -242,17 +244,18 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
                                      vshrn_n_u32(cr_lh, 16));
       uint16x8_t cr_h = vcombine_u16(vshrn_n_u32(cr_hl, 16),
                                      vshrn_n_u32(cr_hh, 16));
-      /* Narrow Y, Cb and Cr values to 8-bit and store to memory. Buffer */
-      /* overwrite is permitted up to the next multiple of ALIGN_SIZE bytes. */
+      /* Narrow Y, Cb, and Cr values to 8-bit and store to memory.  Buffer
+       * overwrite is permitted up to the next multiple of ALIGN_SIZE bytes.
+       */
       vst1q_u8(outptr0, vcombine_u8(vmovn_u16(y_l), vmovn_u16(y_h)));
       vst1q_u8(outptr1, vcombine_u8(vmovn_u16(cb_l), vmovn_u16(cb_h)));
       vst1q_u8(outptr2, vcombine_u8(vmovn_u16(cr_l), vmovn_u16(cr_h)));
 
     } else if (cols_remaining > 0) {
-      /* To prevent buffer overread by the vector load instructions, the */
-      /* last (image_width % 8) columns of data are first memcopied to a */
-      /* temporary buffer large enough to accommodate the vector load. */
-      ALIGN(16) uint8_t tmp_buf[8 * RGB_PIXELSIZE];
+      /* To prevent buffer overread by the vector load instructions, the last
+       * (image_width % 8) columns of data are first memcopied to a temporary
+       * buffer large enough to accommodate the vector load.
+       */
       memcpy(tmp_buf, inptr, cols_remaining * RGB_PIXELSIZE);
       inptr = tmp_buf;
 
@@ -269,9 +272,9 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       uint32x4_t y_l = vmull_laneq_u16(vget_low_u16(r), consts, 0);
       y_l = vmlal_laneq_u16(y_l, vget_low_u16(g), consts, 1);
       y_l = vmlal_laneq_u16(y_l, vget_low_u16(b), consts, 2);
-      uint32x4_t y_h = vmull_high_laneq_u16(r, consts, 0);
-      y_h = vmlal_high_laneq_u16(y_h, g, consts, 1);
-      y_h = vmlal_high_laneq_u16(y_h, b, consts, 2);
+      uint32x4_t y_h = vmull_laneq_u16(vget_high_u16(r), consts, 0);
+      y_h = vmlal_laneq_u16(y_h, vget_high_u16(g), consts, 1);
+      y_h = vmlal_laneq_u16(y_h, vget_high_u16(b), consts, 2);
 
       /* Compute Cb = -0.16874 * R - 0.33126 * G + 0.50000 * B  + 128 */
       uint32x4_t cb_l = scaled_128_5;
@@ -279,9 +282,9 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       cb_l = vmlsl_laneq_u16(cb_l, vget_low_u16(g), consts, 4);
       cb_l = vmlal_laneq_u16(cb_l, vget_low_u16(b), consts, 5);
       uint32x4_t cb_h = scaled_128_5;
-      cb_h = vmlsl_high_laneq_u16(cb_h, r, consts, 3);
-      cb_h = vmlsl_high_laneq_u16(cb_h, g, consts, 4);
-      cb_h = vmlal_high_laneq_u16(cb_h, b, consts, 5);
+      cb_h = vmlsl_laneq_u16(cb_h, vget_high_u16(r), consts, 3);
+      cb_h = vmlsl_laneq_u16(cb_h, vget_high_u16(g), consts, 4);
+      cb_h = vmlal_laneq_u16(cb_h, vget_high_u16(b), consts, 5);
 
       /* Compute Cr = 0.50000 * R - 0.41869 * G - 0.08131 * B  + 128 */
       uint32x4_t cr_l = scaled_128_5;
@@ -289,9 +292,9 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       cr_l = vmlsl_laneq_u16(cr_l, vget_low_u16(g), consts, 6);
       cr_l = vmlsl_laneq_u16(cr_l, vget_low_u16(b), consts, 7);
       uint32x4_t cr_h = scaled_128_5;
-      cr_h = vmlal_high_laneq_u16(cr_h, r, consts, 5);
-      cr_h = vmlsl_high_laneq_u16(cr_h, g, consts, 6);
-      cr_h = vmlsl_high_laneq_u16(cr_h, b, consts, 7);
+      cr_h = vmlal_laneq_u16(cr_h, vget_high_u16(r), consts, 5);
+      cr_h = vmlsl_laneq_u16(cr_h, vget_high_u16(g), consts, 6);
+      cr_h = vmlsl_laneq_u16(cr_h, vget_high_u16(b), consts, 7);
 
       /* Descale Y values (rounding right shift) and narrow to 16-bit. */
       uint16x8_t y_u16 = vcombine_u16(vrshrn_n_u32(y_l, 16),
@@ -302,8 +305,9 @@ void jsimd_rgb_ycc_convert_neon(JDIMENSION image_width,
       /* Descale Cr values (right shift) and narrow to 16-bit. */
       uint16x8_t cr_u16 = vcombine_u16(vshrn_n_u32(cr_l, 16),
                                        vshrn_n_u32(cr_h, 16));
-      /* Narrow Y, Cb and Cr values to 8-bit and store to memory. Buffer */
-      /* overwrite is permitted up to the next multiple of ALIGN_SIZE bytes. */
+      /* Narrow Y, Cb, and Cr values to 8-bit and store to memory.  Buffer
+       * overwrite is permitted up to the next multiple of ALIGN_SIZE bytes.
+       */
       vst1_u8(outptr0, vmovn_u16(y_u16));
       vst1_u8(outptr1, vmovn_u16(cb_u16));
       vst1_u8(outptr2, vmovn_u16(cr_u16));
