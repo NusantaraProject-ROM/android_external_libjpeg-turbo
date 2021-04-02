@@ -5,11 +5,11 @@ third_party {
     type: GIT
     value: "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo"
   }
-  version: "07a7d24ba3c91fa695d4f2b65f0788c0c80c7928"
+  version: "7b4981b6500ccba10733c352b9ed2dad14ce3c73"
   license_type: NOTICE
   last_upgrade_date {
     year: 2021
-    month: 2
-    day: 9
+    month: 4
+    day: 1
   }
 }
