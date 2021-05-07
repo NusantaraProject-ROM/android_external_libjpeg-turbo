@@ -21,6 +21,7 @@ source_set("libjpeg_headers") {
     "jpeglib.h",
     "jpeglibmangler.h",
   ]
+  defines = [ "MANGLE_JPEG_NAMES" ]
 }
 
 if (current_cpu == "x86" || current_cpu == "x64") {
