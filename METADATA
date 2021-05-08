@@ -5,7 +5,7 @@ third_party {
     type: GIT
     value: "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo"
   }
-  version: "07a7d24ba3c91fa695d4f2b65f0788c0c80c7928"
+  version: "764c5fca09cb558f88f3145d67b705f92ffee2d9"
   license_type: NOTICE
   last_upgrade_date {
     year: 2021
