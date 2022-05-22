@@ -39,6 +39,7 @@ cc_defaults {
     cflags: [
         "-DWITH_SIMD",
         "-DNO_GETENV",
+        "-DNO_PUTENV",
 
         "-O3",
         "-fstrict-aliasing",
